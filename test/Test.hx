@@ -5,8 +5,8 @@ class Test {
 		trace("Test World");
 		var path = "2.6_CG107_mux.usm";
 		var strPath = '2.6_CG107_mux_en.srt';
-		usmTestReadWrite(path);
-		// strTest(strPath);
+		// usmTestReadWrite(path);
+		strTest(strPath);
 	}
 
 	static function usmTestReadWrite(location:String) {

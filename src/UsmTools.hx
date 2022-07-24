@@ -27,7 +27,7 @@ class UsmTools {
 				if (tag == tag_SBT)
 					break;
 				else if (tag != tag_SBT)
-					it += skipTagData(i, tag);
+					it += skipChunkData(i, tag);
 			}
 			it++;
 		}
@@ -40,7 +40,7 @@ class UsmTools {
 		return it - 4;
 	}
 
-	static function skipTagData(i:FileInput, tag:String) {
+	static function skipChunkData(i:FileInput, tag:String) {
 		i.bigEndian = true;
 		var chunkSize = 0;
 		if (tag == 'UTF' || tag == 'SFV' || tag == 'SFA') {
