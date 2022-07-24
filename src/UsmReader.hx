@@ -15,13 +15,12 @@ class UsmReader {
 		if (i.readString(4) != 'CRID')
 			throw 'This file not supported.';
 		var fileLength = UsmTools.checkInputLength(i);
-		var endTag = false;
 		var sbtBlock = [];
 		var it = 0;
-		while (it < fileLength || endTag == true) {
+		while (it < fileLength) {
 			UsmTools.skipData(i);
 			sbtBlock[it] = parseSbt();
-			if (sbtBlock.length > 0 && sbtBlock[it].endTag == true) {
+			if (sbtBlock[it].endTag == true) {
 				sbtBlock.pop();
 				break;
 			}
@@ -95,8 +94,7 @@ class UsmReader {
 			i.read(8);
 			var text = i.readString(16);
 			if (text == '#CONTENTS END   ') {
-				var endTag = true;
-				result.endTag = endTag;
+				result.endTag = true;
 			}
 		}
 		return result;
