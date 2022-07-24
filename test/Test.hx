@@ -22,7 +22,8 @@ class Test {
 	static function strTest(location:String) {
 		var input = sys.io.File.read(location);
 		trace('start test srt.');
-		// \r\n // CRLF
-		new SrtReader(input).read();
+		var thisStr = new SrtReader(input).read();
+		trace(thisStr[0]);
+		input.close();
 	}
 }
