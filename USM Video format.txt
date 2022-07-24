@@ -1,0 +1,41 @@
+USM CRI Format for @SBT
+
+ 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  
+|@SBT tag   |ChunkLength|unkno|paddi|   type    |
+ 40 53 42 54 00 00 00 38 00 18 00 00 00 00 00 02 
+
+|timestamp  |  unknown  |  unknown  |  unknown  |
+ 00 00 0C 39 00 00 03 E8 00 00 00 00 00 00 00 00 
+ 
+|  lang id  | interval  |start time |  end time |
+ 00 00 00 00 00 00 00 1E 00 00 00 00 00 00 00 00 
+
+|text length|              text                 |
+ 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+ 
+@SBT - identifier string
+4 byte length of data (big endian)
+2 byte unknown (0x18) - probably Payload offset
+2 byte padding size
+4 byte probably type 1 = header, 2 = metadata, 3 = index, 0 = data
+4 byte timestamp
+4 byte unknown
+8 byte unknown (always 0, padding?)
+
+4 byte lang id
+4 byte display interval in milliseconds
+4 byte start time
+4 byte end time
+
+40 53 42 54 00 00 00 38 00 18 00 00 00 00 00 02
+00 00 00 00 00 00 00 1E 00 00 00 00 00 00 00 00
+
+time end = time begin + time end
+
+Вероятно следует прибавлять 2 к длине строки субтитров при записи (только если есть выравнивание нулями)
+
+lang id:
+0 - china
+1 - english
+4 - french
+5 - german

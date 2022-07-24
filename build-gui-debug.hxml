@@ -1,0 +1,23 @@
+# --resource assets/icons/logo-haxe.png@icon
+
+# --verbose
+--debug
+-lib hxcpp-debug-server
+
+-cp src
+-main SndWavRepacker
+
+-lib hxWidgets
+-lib haxeui-core
+-lib haxeui-hxwidgets
+--library tink_json:0.11.0
+
+# -D analyzer-optimize
+-D ABI=-MD
+-D WXSTATIC
+-D HXCPP_M64
+
+-cpp bin
+
+# --class-path lib/tfh-snd-wav/src
+# --class-path lib/tfh-package-format/src
