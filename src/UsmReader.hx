@@ -38,10 +38,8 @@ class UsmReader {
 				// добавить i.seek() для возврата на позицию до чтения parseSbt();
 				var previousChunkData = UsmTools.readBytesInput(i, rawBytesLength);
 				usmBlock[it] = previousChunkData;
+				// возврат обратно по длине блока сбт
 				it++;
-			}
-			if (onlySbt == false && usmBlock[it].type == 0) {
-				break;
 			}
 			it++;
 		}
