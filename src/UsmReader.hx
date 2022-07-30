@@ -11,38 +11,57 @@ class UsmReader {
 		i.bigEndian = false;
 	}
 
-	public function read(?sbtLang = -1) {
+	public function read(?sbtLang = -1, ?onlySbt = true) {
 		if (i.readString(4) != 'CRID')
 			throw 'This file not supported.';
+		var sbtBlock = processing(sbtLang, onlySbt);
+		return sbtBlock;
+	}
+
+	function processing(?sbtLang = -1, ?onlySbt = true) {
 		var fileLength = UsmTools.checkInputLength(i);
-		var sbtBlock = [];
+		var usmBlock = [];
 		var it = 0;
 		while (it < fileLength) {
-			UsmTools.skipData(i);
-			sbtBlock[it] = parseSbt();
-			if (sbtBlock[it].endTag == true) {
-				sbtBlock.pop();
+			// var curPos = i.tell();
+			var rawBytesLength = UsmTools.skipData(i);
+			i.seek(-rawBytesLength, SeekCur);
+			// var chunkPos = i.tell();
+			// var chunkLength = chunkPos - curPos;
+			if (onlySbt == false) {
+				trace('only sbt false');
+				var chunkData = UsmTools.readBytesInput(i, rawBytesLength);
+				usmBlock[it] = chunkData;
+				it++;
+			}
+			usmBlock[it] = parseSbt();
+			if (usmBlock[it].endTag == true) {
+				usmBlock.pop();
+				break;
+			}
+			if (onlySbt == false && usmBlock[it].type == 0) {
 				break;
 			}
 			it++;
 		}
 		it = 0;
-		while (it < sbtBlock.length) {
-			if (sbtBlock[it].type != 0 && sbtBlock[it].endTag == false) {
-				sbtBlock.shift();
+		while (it < usmBlock.length) {
+			if (usmBlock[it].type != 0 && usmBlock[it].endTag == false) {
+				usmBlock.shift();
 			} else
 				it++;
 		}
 		if (sbtLang != -1) {
 			it = 0;
-			while (it < sbtBlock.length) {
-				if (sbtBlock[it].langId != sbtLang) {
-					sbtBlock.splice(it, 1);
+			while (it < usmBlock.length) {
+				if (usmBlock[it].langId != sbtLang) {
+					usmBlock.splice(it, 1);
 				} else
 					it++;
 			}
 		}
-		return sbtBlock;
+		trace('Usm file has been read.');
+		return usmBlock;
 	}
 
 	/* 
@@ -54,6 +73,9 @@ class UsmReader {
 	 */
 	function parseSbt():SbtTag {
 		var result = {
+			isSbt: true,
+			previousRawBytes: Bytes.alloc(0),
+			startPos: 0,
 			endTag: false,
 			chunkLength: 0,
 			paddingSize: 0, // haxe.io.Bytes.Bytes.alloc(0)
@@ -65,6 +87,7 @@ class UsmReader {
 			textLength: 0,
 			text: ''
 		};
+		result.startPos = i.tell();
 		i.readInt32(); // @SBT
 		i.bigEndian = true;
 		result.chunkLength = i.readInt32();

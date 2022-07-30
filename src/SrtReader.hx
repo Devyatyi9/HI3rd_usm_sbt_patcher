@@ -1,5 +1,7 @@
 package;
 
+import UsmData;
+
 class SrtReader {
 	var i:sys.io.FileInput;
 
@@ -8,7 +10,7 @@ class SrtReader {
 		i.bigEndian = false;
 	}
 
-	public function read() {
+	public function read():Array<StrData> {
 		var fileLength = UsmTools.checkInputLength(i);
 		var sectionBlock = [];
 		var it = 0;
@@ -20,7 +22,7 @@ class SrtReader {
 		return sectionBlock;
 	}
 
-	function readSection() {
+	function readSection():StrData {
 		var numberS = i.readLine();
 		var timeStartS = i.readString(12);
 		i.read(5);

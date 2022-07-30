@@ -1,6 +1,7 @@
 package;
 
 import sys.io.FileInput;
+import UsmData;
 
 class UsmTools {
 	public static function checkInputLength(i:FileInput) {
@@ -22,14 +23,17 @@ class UsmTools {
 		while (it < (fileLength - 3)) {
 			byteChar = i.readByte();
 			if (byteChar == 64) {
+				it++;
+				// trace('cur pos: ' + i.tell());
 				it = it + 3;
 				tag = i.readString(3);
+				// trace('cur pos: ' + i.tell());
 				if (tag == tag_SBT)
 					break;
 				else if (tag != tag_SBT)
 					it += skipChunkData(i, tag);
-			}
-			it++;
+			} else
+				it++;
 		}
 		if (it == (fileLength - 3)) {
 			trace("@SBT tag not found in this file.");
@@ -49,5 +53,26 @@ class UsmTools {
 		}
 		i.bigEndian = false;
 		return chunkSize + 4;
+	}
+
+	public static function readBytesInput(i:FileInput, length:Int):SbtTag {
+		// var startPos = i.tell();
+		var rawBytes = i.read(length);
+		var result = {
+			isSbt: false,
+			previousRawBytes: rawBytes,
+			startPos: 0,
+			endTag: false,
+			chunkLength: 0,
+			paddingSize: 0,
+			type: -1,
+			langId: 0,
+			interval: 0,
+			startTime: 0,
+			endTime: 0,
+			textLength: 0,
+			text: ''
+		}
+		return result;
 	}
 }
