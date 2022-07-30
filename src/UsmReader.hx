@@ -45,6 +45,9 @@ class UsmReader {
 			}
 			it++;
 		}
+		if (onlySbt == false) {
+				trace('only sbt false');
+		}
 		it = 0;
 		while (it < usmBlock.length) {
 			if (usmBlock[it].type != 0 && usmBlock[it].endTag == false) {
