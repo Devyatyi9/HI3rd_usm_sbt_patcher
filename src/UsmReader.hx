@@ -28,16 +28,16 @@ class UsmReader {
 			i.seek(-rawBytesLength, SeekCur);
 			// var chunkPos = i.tell();
 			// var chunkLength = chunkPos - curPos;
+			usmBlock[it] = parseSbt();
+			if (usmBlock[it].endTag == true) {
+				usmBlock.pop();
+				break;
+			}
 			if (onlySbt == false) {
 				trace('only sbt false');
 				var chunkData = UsmTools.readBytesInput(i, rawBytesLength);
 				usmBlock[it] = chunkData;
 				it++;
-			}
-			usmBlock[it] = parseSbt();
-			if (usmBlock[it].endTag == true) {
-				usmBlock.pop();
-				break;
 			}
 			if (onlySbt == false && usmBlock[it].type == 0) {
 				break;
