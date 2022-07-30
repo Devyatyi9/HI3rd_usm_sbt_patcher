@@ -25,7 +25,6 @@ class UsmReader {
 		while (it < fileLength) {
 			// var curPos = i.tell();
 			var rawBytesLength = UsmTools.skipData(i);
-			i.seek(-rawBytesLength, SeekCur);
 			// var chunkPos = i.tell();
 			// var chunkLength = chunkPos - curPos;
 			usmBlock[it] = parseSbt();
@@ -35,6 +34,7 @@ class UsmReader {
 			}
 			if (onlySbt == false) {
 				trace('only sbt false');
+				i.seek(-rawBytesLength, SeekCur); // + длина блока сбт
 				// добавить i.seek() для возврата на позицию до чтения parseSbt();
 				var previousChunkData = UsmTools.readBytesInput(i, rawBytesLength);
 				usmBlock[it] = previousChunkData;
