@@ -36,8 +36,8 @@ class UsmReader {
 			if (onlySbt == false) {
 				trace('only sbt false');
 				// добавить i.seek() для возврата на позицию до чтения parseSbt();
-				var chunkData = UsmTools.readBytesInput(i, rawBytesLength);
-				usmBlock[it] = chunkData;
+				var previousChunkData = UsmTools.readBytesInput(i, rawBytesLength);
+				usmBlock[it] = previousChunkData;
 				it++;
 			}
 			if (onlySbt == false && usmBlock[it].type == 0) {
