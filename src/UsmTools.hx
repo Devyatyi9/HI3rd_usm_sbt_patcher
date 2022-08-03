@@ -12,9 +12,9 @@ class UsmTools {
 		return l;
 	}
 
-	public static function skipData(i:FileInput) {
+	public static function skipData(i:FileInput, ?fileLength = -1) {
 		var tag_SBT = 'SBT';
-		var fileLength = UsmTools.checkInputLength(i);
+		fileLength = UsmTools.checkInputLength(i);
 		var byteChar:Int;
 		var tag:String;
 		// trace('cur pos: ' + i.tell());
@@ -56,12 +56,13 @@ class UsmTools {
 	}
 
 	public static function readBytesInput(i:FileInput, length:Int):SbtTag {
-		// var startPos = i.tell();
+		var startPos = i.tell();
+		trace("readBytesInput tell: " + startPos);
 		var rawBytes = i.read(length);
 		var result = {
 			isSbt: false,
 			previousRawBytes: rawBytes,
-			startPos: 0,
+			startPos: startPos,
 			endTag: false,
 			chunkLength: 0,
 			paddingSize: 0,

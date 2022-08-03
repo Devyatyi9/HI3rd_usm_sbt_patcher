@@ -16,7 +16,7 @@ class Test {
 		// USM Read
 		var input = sys.io.File.read(location);
 		trace('Start of usm file reading: "$location"');
-		var thisUSM = new UsmReader(input).read(1, false);
+		var thisUSM = new UsmReader(input).read(-1, false);
 		trace(thisUSM[0]);
 		input.close();
 	}

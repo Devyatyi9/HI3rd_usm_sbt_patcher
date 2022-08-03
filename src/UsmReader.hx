@@ -20,35 +20,72 @@ class UsmReader {
 
 	function processing(?sbtLang = -1, ?onlySbt = true) {
 		var fileLength = UsmTools.checkInputLength(i);
+		var rawBytesLength = -1;
+		var previousDataPos = 0;
 		var usmBlock = [];
 		var it = 0;
 		while (it < fileLength) {
-			// var curPos = i.tell();
-			var rawBytesLength = UsmTools.skipData(i);
+			if (usmBlock.length > 1) {
+				if (usmBlock[it - 1].endTag == true) {
+					usmBlock.pop();
+					break;
+				}
+			}
+			trace('before rawBytesLength tell: ' + i.tell());
+			UsmTools.skipData(i, fileLength); // rawBytesLength
+			var beginPos = i.tell();
 			// var chunkPos = i.tell();
 			// var chunkLength = chunkPos - curPos;
-			usmBlock[it] = parseSbt();
-			if (usmBlock[it].endTag == true) {
-				usmBlock.pop();
-				break;
-			}
-			if (onlySbt == false) {
+			if (onlySbt == true) {
+				usmBlock[it] = parseSbt();
+			} else {
 				trace('only sbt false');
+				trace('after rawBytesLength tell: ' + i.tell());
+				rawBytesLength = beginPos - previousDataPos;
+				if (usmBlock.length > 1) {
+					if (usmBlock[it - 1].isSbt == true) {
+						var sbtEndPos = usmBlock[it - 1].startPos + usmBlock[it - 1].chunkLength + 8;
+						if (beginPos == sbtEndPos) {
+							trace('sbt pos equal');
+							usmBlock[it] = parseSbt();
+							it++;
+							continue;
+						}
+					}
+				}
 				i.seek(-rawBytesLength, SeekCur); // + длина блока сбт
+				trace('skip tell: ' + i.tell());
 				// добавить i.seek() для возврата на позицию до чтения parseSbt();
 				var previousChunkData = UsmTools.readBytesInput(i, rawBytesLength);
+				trace('read skip tell: ' + i.tell());
 				usmBlock[it] = previousChunkData;
-				// возврат обратно по длине блока сбт
 				it++;
+				usmBlock[it] = parseSbt();
+				if (usmBlock[it].type != 0) {
+					var blockPos = i.tell();
+					trace("blockPos " + blockPos);
+					var skipLength = blockPos - usmBlock[it].startPos;
+					trace("skipLength " + skipLength);
+					i.seek(-skipLength, SeekCur);
+					var previousChunkData = UsmTools.readBytesInput(i, skipLength);
+					usmBlock[it] = previousChunkData;
+				}
+				previousDataPos = i.tell();
 			}
 			it++;
 		}
 		if (onlySbt == false) {
-				trace('only sbt false');
+			trace(i.tell());
+			trace('only sbt false');
+			rawBytesLength = usmBlock[usmBlock.length - 1].startPos + usmBlock[usmBlock.length - 1].chunkLength + 8;
+			i.seek(-rawBytesLength, SeekCur);
+			rawBytesLength = fileLength - rawBytesLength;
+			var previousChunkData = UsmTools.readBytesInput(i, rawBytesLength);
+			usmBlock[usmBlock.length] = previousChunkData;
 		}
 		it = 0;
 		while (it < usmBlock.length) {
-			if (usmBlock[it].type != 0 && usmBlock[it].endTag == false) {
+			if (usmBlock[it].type != 0 && usmBlock[it].endTag == false && usmBlock[it].isSbt == true) {
 				usmBlock.shift();
 			} else
 				it++;
