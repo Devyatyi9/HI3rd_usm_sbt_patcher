@@ -6,10 +6,17 @@ class Test {
 		var path = "2.6_CG107_mux.usm";
 		var strPath = '2.6_CG107_mux_ru.srt';
 		var pathTestFile = 'testfile.bin';
-		usmTestReadWrite(path);
+		// usmTestReadWrite(path);
+		new UsmPatcher(path).patchFile(strPath);
 		// pathUsmFile(path);
 		// strTest(strPath, path);
 		// outputTest(pathTestFile);
+	}
+
+	static function multipleFilesProcessing(path:String, strPath:String) {
+		var i = 0;
+		// while
+		new UsmPatcher(path).patchFile(strPath);
 	}
 
 	static function usmTestReadWrite(location:String) {
@@ -23,7 +30,7 @@ class Test {
 
 		var output = sys.io.File.write(save_location);
 		trace('Start of usm file writing: "$save_location"');
-		new SbtWriter(output).testWrite(thisUSM);
+		new SbtWriter(output).write(thisUSM);
 		output.close();
 		trace('end.');
 	}
