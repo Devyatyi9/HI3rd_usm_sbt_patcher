@@ -2,6 +2,7 @@ package;
 
 import sys.io.FileOutput;
 import sys.io.FileInput;
+import UsmData;
 
 class UsmPatcher {
 	var location:String;
@@ -14,7 +15,7 @@ class UsmPatcher {
 		// USM Read
 		var fileData = usmRead();
 		// USM Write
-		usmWrite(fileData);
+		// usmWrite(fileData);
 	}
 
 	function usmRead() {

@@ -15,6 +15,7 @@ typedef SbtTag = {
 	var chunkLength:Int;
 	var paddingSize:Int; // haxe.io.Bytes //Int
 	var type:Int;
+	var timestamp:Int;
 	var langId:Int;
 	var interval:Int;
 	var startTime:Int;

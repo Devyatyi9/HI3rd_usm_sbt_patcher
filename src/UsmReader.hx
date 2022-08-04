@@ -27,6 +27,7 @@ class UsmReader {
 		while (it < fileLength) {
 			if (usmBlock.length > 1) {
 				if (usmBlock[it - 1].endTag == true) {
+					i.seek(usmBlock[it - 1].startPos, SeekBegin);
 					usmBlock.pop();
 					break;
 				}
@@ -48,6 +49,12 @@ class UsmReader {
 						if (beginPos == sbtEndPos) {
 							trace('sbt pos equal');
 							usmBlock[it] = parseSbt();
+							if (usmBlock[it].paddingSize > 0) {
+								var paddingLength = usmBlock[it].chunkLength - 44 - usmBlock[it].textLength + 2;
+								trace('paddingLength: ' + paddingLength);
+								i.seek(paddingLength, SeekCur);
+							}
+							previousDataPos = i.tell();
 							it++;
 							continue;
 						}
@@ -77,9 +84,12 @@ class UsmReader {
 		if (onlySbt == false) {
 			trace(i.tell());
 			trace('only sbt false');
-			rawBytesLength = usmBlock[usmBlock.length - 1].startPos + usmBlock[usmBlock.length - 1].chunkLength + 8;
-			i.seek(-rawBytesLength, SeekCur);
-			rawBytesLength = fileLength - rawBytesLength;
+			previousDataPos = i.tell();
+			// rawBytesLength = usmBlock[usmBlock.length - 1].startPos + usmBlock[usmBlock.length - 1].chunkLength + 8;
+			rawBytesLength = fileLength - previousDataPos;
+			// i.seek(-rawBytesLength, SeekEnd);
+			// i.seek(rawBytesLength, SeekBegin);
+			// rawBytesLength = fileLength - rawBytesLength;
 			var previousChunkData = UsmTools.readBytesInput(i, rawBytesLength);
 			usmBlock[usmBlock.length] = previousChunkData;
 		}
@@ -119,6 +129,7 @@ class UsmReader {
 			chunkLength: 0,
 			paddingSize: 0, // haxe.io.Bytes.Bytes.alloc(0)
 			type: -1,
+			timestamp: 0,
 			langId: 0,
 			interval: 0,
 			startTime: 0,
@@ -136,15 +147,16 @@ class UsmReader {
 		result.paddingSize = haxe.io.Bytes.fastGet(paddingSize.getData(), 0);
 		var type = i.readInt32();
 		result.type = type;
-		i.bigEndian = false;
 		if (type == 0) {
-			i.readInt32(); // timestamp
+			result.timestamp = i.readInt32(); // timestamp
+			i.bigEndian = false;
 			i.readInt32(); // unknown
 			i.read(8); // unknown (always 0, padding?)
 			result.langId = i.readInt32();
 			result.interval = i.readInt32(); // always 1000
 			result.startTime = i.readInt32();
 			result.endTime = i.readInt32();
+			// есть баг с китайскими субтитрами, в некоторых не записываются 2 последних символа
 			result.textLength = i.readInt32();
 			if (result.paddingSize > 0) {
 				result.text = i.readString(result.textLength - 2);

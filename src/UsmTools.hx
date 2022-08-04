@@ -67,6 +67,7 @@ class UsmTools {
 			chunkLength: 0,
 			paddingSize: 0,
 			type: -1,
+			timestamp: 0,
 			langId: 0,
 			interval: 0,
 			startTime: 0,

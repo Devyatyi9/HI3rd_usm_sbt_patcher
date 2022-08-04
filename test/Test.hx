@@ -17,8 +17,15 @@ class Test {
 		var input = sys.io.File.read(location);
 		trace('Start of usm file reading: "$location"');
 		var thisUSM = new UsmReader(input).read(-1, false);
-		trace(thisUSM[0]);
+		// trace(thisUSM[29].previousRawBytes);
 		input.close();
+		var save_location = "test/2.6_CG107_mux.usm";
+
+		var output = sys.io.File.write(save_location);
+		trace('Start of usm file writing: "$save_location"');
+		new SbtWriter(output).testWrite(thisUSM);
+		output.close();
+		trace('end.');
 	}
 
 	static function strTest(location:String, location2:String) {
