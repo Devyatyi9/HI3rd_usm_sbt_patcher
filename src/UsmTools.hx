@@ -57,7 +57,7 @@ class UsmTools {
 
 	public static function readBytesInput(i:FileInput, length:Int):SbtTag {
 		var startPos = i.tell();
-		trace("readBytesInput tell: " + startPos);
+		// trace("readBytesInput tell: " + startPos);
 		var rawBytes = i.read(length);
 		var result = {
 			isSbt: false,
@@ -73,7 +73,8 @@ class UsmTools {
 			startTime: 0,
 			endTime: 0,
 			textLength: 0,
-			text: ''
+			text: '',
+			textLengthEquals: false
 		}
 		return result;
 	}

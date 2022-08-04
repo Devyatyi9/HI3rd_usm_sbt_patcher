@@ -25,6 +25,7 @@ class UsmReader {
 		var usmBlock = [];
 		var it = 0;
 		while (it < fileLength) {
+			// отбрасывание последнего блока SBT без субтитров и выход из цикла
 			if (usmBlock.length > 1) {
 				if (usmBlock[it - 1].endTag == true) {
 					i.seek(usmBlock[it - 1].startPos, SeekBegin);
@@ -32,7 +33,7 @@ class UsmReader {
 					break;
 				}
 			}
-			trace('before rawBytesLength tell: ' + i.tell());
+			// trace('before rawBytesLength tell: ' + i.tell());
 			UsmTools.skipData(i, fileLength); // rawBytesLength
 			var beginPos = i.tell();
 			// var chunkPos = i.tell();
@@ -40,18 +41,21 @@ class UsmReader {
 			if (onlySbt == true) {
 				usmBlock[it] = parseSbt();
 			} else {
-				trace('only sbt false');
-				trace('after rawBytesLength tell: ' + i.tell());
+				// trace('only sbt false');
+				// trace('after rawBytesLength tell: ' + i.tell());
 				rawBytesLength = beginPos - previousDataPos;
+				// если SBT блоки идут друг с за другом
 				if (usmBlock.length > 1) {
 					if (usmBlock[it - 1].isSbt == true) {
 						var sbtEndPos = usmBlock[it - 1].startPos + usmBlock[it - 1].chunkLength + 8;
 						if (beginPos == sbtEndPos) {
-							trace('sbt pos equal');
+							// trace('sbt pos equal');
 							usmBlock[it] = parseSbt();
 							if (usmBlock[it].paddingSize > 0) {
-								var paddingLength = usmBlock[it].chunkLength - 44 - usmBlock[it].textLength + 2;
-								trace('paddingLength: ' + paddingLength);
+								var paddingLength = usmBlock[it].chunkLength - 44 - usmBlock[it].textLength;
+								if (usmBlock[it].textLengthEquals == true)
+									paddingLength -= 2;
+								// trace('paddingLength: ' + paddingLength);
 								i.seek(paddingLength, SeekCur);
 							}
 							previousDataPos = i.tell();
@@ -61,18 +65,18 @@ class UsmReader {
 					}
 				}
 				i.seek(-rawBytesLength, SeekCur); // + длина блока сбт
-				trace('skip tell: ' + i.tell());
+				// trace('skip tell: ' + i.tell());
 				// добавить i.seek() для возврата на позицию до чтения parseSbt();
 				var previousChunkData = UsmTools.readBytesInput(i, rawBytesLength);
-				trace('read skip tell: ' + i.tell());
+				// trace('read skip tell: ' + i.tell());
 				usmBlock[it] = previousChunkData;
 				it++;
 				usmBlock[it] = parseSbt();
 				if (usmBlock[it].type != 0) {
 					var blockPos = i.tell();
-					trace("blockPos " + blockPos);
+					// trace("blockPos " + blockPos);
 					var skipLength = blockPos - usmBlock[it].startPos;
-					trace("skipLength " + skipLength);
+					// trace("skipLength " + skipLength);
 					i.seek(-skipLength, SeekCur);
 					var previousChunkData = UsmTools.readBytesInput(i, skipLength);
 					usmBlock[it] = previousChunkData;
@@ -82,8 +86,8 @@ class UsmReader {
 			it++;
 		}
 		if (onlySbt == false) {
-			trace(i.tell());
-			trace('only sbt false');
+			// trace(i.tell());
+			// trace('only sbt false');
 			previousDataPos = i.tell();
 			// rawBytesLength = usmBlock[usmBlock.length - 1].startPos + usmBlock[usmBlock.length - 1].chunkLength + 8;
 			rawBytesLength = fileLength - previousDataPos;
@@ -135,7 +139,8 @@ class UsmReader {
 			startTime: 0,
 			endTime: 0,
 			textLength: 0,
-			text: ''
+			text: '',
+			textLengthEquals: false
 		};
 		result.startPos = i.tell();
 		i.readInt32(); // @SBT
@@ -156,10 +161,25 @@ class UsmReader {
 			result.interval = i.readInt32(); // always 1000
 			result.startTime = i.readInt32();
 			result.endTime = i.readInt32();
-			// есть баг с китайскими субтитрами, в некоторых не записываются 2 последних символа
+			// trace(result.paddingSize);
 			result.textLength = i.readInt32();
 			if (result.paddingSize > 0) {
+				#if !static
 				result.text = i.readString(result.textLength - 2);
+				var addString = i.readString(2);
+				// trace(addString);
+				if (addString.length > 0 && addString != '\x00\x00') {
+					result.textLengthEquals = true;
+					trace(addString.charAt(2).length);
+					result.text += addString;
+				}
+				// trace(result.text);
+				#else
+				result.text = i.readString(result.textLength);
+				var textBytesLength = Bytes.ofString(result.text).length;
+				if (textBytesLength == result.textLength)
+					result.textLengthEquals = true;
+				#end
 			} else
 				result.text = i.readString(result.textLength);
 		} else if (type == 2) {

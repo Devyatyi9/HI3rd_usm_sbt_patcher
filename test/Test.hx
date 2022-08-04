@@ -17,7 +17,7 @@ class Test {
 		var input = sys.io.File.read(location);
 		trace('Start of usm file reading: "$location"');
 		var thisUSM = new UsmReader(input).read(-1, false);
-		// trace(thisUSM[29].previousRawBytes);
+		// trace(thisUSM[25].text);
 		input.close();
 		var save_location = "test/2.6_CG107_mux.usm";
 

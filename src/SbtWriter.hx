@@ -51,7 +51,8 @@ class SbtWriter {
 			} else {
 				o.writeString("@SBT");
 				o.writeInt32(usm[it].chunkLength);
-				o.writeString('\x00\x18');
+				o.writeString('\x00');
+				o.writeByte(24); // \x18
 				o.writeString('\x00');
 				o.writeByte(usm[it].paddingSize);
 				o.writeInt32(usm[it].type);
@@ -71,9 +72,11 @@ class SbtWriter {
 				if (usm[it].paddingSize > 0) {
 					var paddingLength = usm[it].chunkLength - 44 - usm[it].textLength + 2;
 					// var paddingLength = usm[it].paddingSize + 2;
-					trace('paddingLength: ' + paddingLength);
-					trace('textLength: ' + usm[it].textLength);
-					trace('text: ' + usm[it].text.length);
+					if (usm[it].textLengthEquals == true)
+						paddingLength = paddingLength - 2;
+					// trace('paddingLength: ' + paddingLength);
+					// trace('textLength: ' + usm[it].textLength);
+					// trace('text: ' + usm[it].text.length);
 					var i = 0;
 					while (i < paddingLength) {
 						o.writeString('\x00');
@@ -84,6 +87,6 @@ class SbtWriter {
 			}
 			it++;
 		}
-		trace('THE END.');
+		trace('Usm file has been write.');
 	}
 }
