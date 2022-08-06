@@ -38,7 +38,7 @@ class SbtWriter {
 				o.writeInt32(usm[it].textLength);
 				o.writeString(usm[it].text);
 				if (usm[it].paddingSize > 0) {
-					var paddingLength = usm[it].chunkLength - 44 - usm[it].textLength + 2;
+					var paddingLength = usm[it].chunkLength - 44 - usm[it].textLength + 2; // -8?
 					// var paddingLength = usm[it].paddingSize + 2;
 					if (usm[it].textLengthEquals == true)
 						paddingLength = paddingLength - 2;

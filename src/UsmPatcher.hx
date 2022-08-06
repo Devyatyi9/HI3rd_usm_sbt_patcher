@@ -1,6 +1,7 @@
 package;
 
 import UsmData;
+import haxe.io.Bytes;
 
 class UsmPatcher {
 	var location:String;
@@ -47,17 +48,17 @@ class UsmPatcher {
 	}
 
 	function mergeData(fileData:Array<SbtTag>, strData:Array<StrData>) {
-		//
-		// fileData.length
 		var usmI = 0;
 		var srtI = 0;
-		while (usmI < fileData.length) {
+		while (usmI < fileData.length || srtI < strData.length) {
 			if (fileData[usmI].isSbt == true && fileData[usmI].langId == 1) {
 				fileData[usmI].startTime = strData[srtI].timeStart;
 				fileData[usmI].endTime = strData[srtI].timeEnd - strData[srtI].timeStart;
 				fileData[usmI].text = strData[srtI].text;
-				fileData[usmI].textLength = strData[srtI].text.length;
+				fileData[usmI].textLength = Bytes.ofString(strData[srtI].text).length;
 				fileData[usmI].textLengthEquals = false;
+				fileData[usmI].paddingSize = 0;
+				fileData[usmI].chunkLength = 44 + fileData[usmI].textLength;
 				srtI++;
 			}
 			usmI++;
