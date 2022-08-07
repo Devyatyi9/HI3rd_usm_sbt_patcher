@@ -1,6 +1,7 @@
 package srt;
 
-import UsmData;
+import usm.*;
+import usm.UsmData.StrData;
 
 class SrtReader {
 	var i:sys.io.FileInput;

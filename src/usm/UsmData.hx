@@ -29,7 +29,7 @@ typedef StrData = {
 }
 
 typedef ConfigFile = {
-	var srt_path:String;
 	var postfix:String;
+	var srt_path:String;
 	var game_path:String;
 }

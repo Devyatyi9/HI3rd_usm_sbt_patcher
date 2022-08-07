@@ -42,7 +42,7 @@ class UsmPatcher {
 
 	function readStr(location:String) {
 		var input = sys.io.File.read(location);
-		trace('Start of srt file reading.');
+		trace('Start of srt file reading: "$location"');
 		var thisStr = new SrtReader(input).read();
 		input.close();
 		return thisStr;
