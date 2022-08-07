@@ -27,15 +27,15 @@ class Test {
 
 	static function checkConfig(game_path:String, strPath:String, postfix:String) {
 		// "C:\\Program Files\\Honkai Impact 3rd glb"
-		// Games/BH3_Data/StreamingAssets/Video
+		// Games/BH3_Data/StreamingAssets/Video/
 		game_path = Path.normalize(game_path);
 		game_path = Path.removeTrailingSlashes(game_path);
-		var usm_path = '/Games/BH3_Data/StreamingAssets/Video';
+		var usm_path = '/Games/BH3_Data/StreamingAssets/Video/';
 		if (FileSystem.exists(game_path + usm_path)) {
 			trace('Game path is correct.');
 			usm_path = game_path + usm_path;
 			trace('Usm video path: ' + usm_path);
-		} else if (FileSystem.exists(game_path + '/BH3_Data/StreamingAssets/Video')) {
+		} else if (FileSystem.exists(game_path + '/BH3_Data/StreamingAssets/Video/')) {
 			trace('Game path is correct.');
 			usm_path = game_path + usm_path;
 			trace('Usm video path: ' + usm_path);
@@ -81,23 +81,22 @@ class Test {
 				var thisUsmPath = new haxe.io.Path(thisUsm);
 				trace(thisUsmPath);
 				if (thisUsmPath.ext == 'usm') {
-					trace('next.');
+					// trace('next.');
 					var thisStr = strFiles[iStr];
 					var thisStrPath = new haxe.io.Path(thisStr);
-					trace(thisStrPath);
+					// trace(thisStrPath);
 					if (thisStrPath.ext == 'srt') {
-						trace('go next.');
+						// trace('go next.');
 						var thisStrNotPostfix = thisStrPath.file.endsWith(config.postfix);
 						if (thisUsmPath.file == thisStrPath.file) {
 							new UsmPatcher(usmFiles[iUsm]).patchFile(strFiles[iStr]);
 						} else if (thisStrNotPostfix == true) {
-							trace('test');
+							// trace('test');
 							var thisStrTrimmed = thisStrPath.file.substr(0, thisStrPath.file.length - config.postfix.length);
 							if (thisUsmPath.file == thisStrTrimmed) {
-								new UsmPatcher(usmFiles[iUsm]).patchFile(strFiles[iStr]);
+								new UsmPatcher(config.usm_path + usmFiles[iUsm]).patchFile(config.strPath + strFiles[iStr]);
 							}
 						}
-						//
 					}
 				}
 				iStr++;
