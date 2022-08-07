@@ -57,6 +57,7 @@ class SrtReader {
 		var timeEArrayConcat = timeEArray.concat(timeEndSplit);
 		timeEndS = timeEArrayConcat.join('');
 		var timeEnd = Std.parseInt(timeEndS);
+		trace('Srt file has been read.');
 
 		return {
 			number: number,

@@ -11,16 +11,13 @@ using StringTools;
 class Test {
 	static public function main():Void {
 		trace("Test launch");
-		// var game_path = "D:/Games/Honkai Impact 3rd glb/Games";
-		// var game_path = "D:\\Games\\Honkai Impact 3rd glb\\Games";
-		// var convertedPath = new haxe.io.Path(game_path);
-		// trace(convertedPath.dir);
-		// var path = "2.6_CG107_mux.usm";
-		// var strPath = '2.6_CG107_mux_ru.srt';
+		// var path = "5.3_Birthday_Kiana_4919E914AA03A7E4_1.usm";
+		// var strPath = 'srt/5.3_Birthday_Kiana_4919E914AA03A7E4_1_en.srt';
 		// usmTestReadWrite(path);
 		// new UsmPatcher(path).patchFile(strPath);
+		// readStr(strPath);
+		//
 		var configData = configFile(); // test_config, true
-		// trace(configData);
 		var loadedConfig = checkConfig(configData.game_path, configData.srt_path, configData.postfix);
 		multipleFilesProcessing(loadedConfig);
 	}
@@ -149,5 +146,13 @@ class Test {
 		new SbtWriter(output).write(thisUSM);
 		output.close();
 		trace('end.');
+	}
+
+	static function readStr(location:String) {
+		var input = sys.io.File.read(location);
+		trace('Start of srt file reading: "$location"');
+		var thisStr = new SrtReader(input).read();
+		input.close();
+		return thisStr;
 	}
 }
