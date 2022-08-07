@@ -1,4 +1,4 @@
-package;
+package srt;
 
 import UsmData;
 

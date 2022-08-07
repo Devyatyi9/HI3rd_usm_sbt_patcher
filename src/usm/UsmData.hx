@@ -1,11 +1,7 @@
-package;
+package usm;
 
 import haxe.io.Bytes;
 import haxe.Int32;
-
-enum Tags {
-	test;
-}
 
 typedef SbtTag = {
 	var isSbt:Bool;
@@ -30,4 +26,10 @@ typedef StrData = {
 	var timeStart:Int;
 	var timeEnd:Int;
 	var text:String;
+}
+
+typedef ConfigFile = {
+	var srt_path:String;
+	var postfix:String;
+	var game_path:String;
 }

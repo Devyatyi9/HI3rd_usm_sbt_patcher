@@ -1,7 +1,7 @@
-package;
+package usm;
 
 import haxe.io.Bytes;
-import UsmData;
+import usm.UsmData;
 
 class UsmReader {
 	var i:sys.io.FileInput;
@@ -170,7 +170,7 @@ class UsmReader {
 				// trace(addString);
 				if (addString.length > 0 && addString != '\x00\x00') {
 					result.textLengthEquals = true;
-					trace(addString.charAt(2).length);
+					// trace(addString.charAt(2).length);
 					result.text += addString;
 				}
 				// trace(result.text);

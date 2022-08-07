@@ -1,7 +1,7 @@
-package;
+package usm;
 
 import sys.io.FileInput;
-import UsmData;
+import usm.UsmData;
 
 class UsmTools {
 	public static function checkInputLength(i:FileInput) {

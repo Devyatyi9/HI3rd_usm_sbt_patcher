@@ -1,7 +1,7 @@
-package;
+package usm;
 
 import haxe.io.Bytes;
-import UsmData;
+import usm.UsmData;
 
 class SbtWriter {
 	var o:sys.io.FileOutput;

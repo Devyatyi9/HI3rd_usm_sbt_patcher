@@ -1,7 +1,8 @@
-package;
+package usm;
 
-import UsmData;
+import usm.UsmData;
 import haxe.io.Bytes;
+import srt.*;
 
 class UsmPatcher {
 	var location:String;
@@ -41,7 +42,7 @@ class UsmPatcher {
 
 	function readStr(location:String) {
 		var input = sys.io.File.read(location);
-		trace('start test srt.');
+		trace('Start of srt file reading.');
 		var thisStr = new SrtReader(input).read();
 		input.close();
 		return thisStr;

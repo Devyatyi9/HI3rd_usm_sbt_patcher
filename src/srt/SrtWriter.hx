@@ -1,3 +1,3 @@
-package;
+package srt;
 
 class SrtWriter {}
