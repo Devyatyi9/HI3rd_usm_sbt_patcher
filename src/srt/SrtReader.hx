@@ -30,10 +30,16 @@ class SrtReader {
 		var timeEndS = i.readString(12);
 		i.readLine();
 		var text = i.readLine();
-		var textNext = i.readLine();
-		while (textNext.length > 0) {
-			text = text + '\n' + textNext;
-			textNext = i.readLine();
+		var stopLoop = false;
+		try {
+			var textNext = i.readLine();
+			while (textNext.length > 0 || stopLoop == true) {
+				text = text + '\n' + textNext;
+				textNext = i.readLine();
+			}
+		} catch (e:haxe.io.Eof) {
+			stopLoop = true;
+			trace(e);
 		}
 		// String to int
 		var number = Std.parseInt(numberS);

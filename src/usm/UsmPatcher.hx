@@ -1,5 +1,6 @@
 package usm;
 
+import haxe.macro.Expr.TypeParam;
 import usm.UsmData;
 import haxe.io.Bytes;
 import srt.*;
@@ -51,7 +52,11 @@ class UsmPatcher {
 	function mergeData(fileData:Array<SbtTag>, strData:Array<StrData>) {
 		var usmI = 0;
 		var srtI = 0;
-		while (usmI < fileData.length || srtI < strData.length) {
+		var fileLength = fileData.length - 1;
+		var strLength = strData.length - 1;
+		while ((usmI < fileData.length) || (srtI < strData.length)) {
+			trace('usmI: ' + usmI);
+			trace('fileLength: ' + fileLength);
 			if (fileData[usmI].isSbt == true && fileData[usmI].langId == 1) {
 				fileData[usmI].startTime = strData[srtI].timeStart;
 				fileData[usmI].endTime = strData[srtI].timeEnd - strData[srtI].timeStart;

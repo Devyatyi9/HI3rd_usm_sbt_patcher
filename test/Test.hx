@@ -46,6 +46,7 @@ class Test {
 		}
 		strPath = Path.normalize(strPath);
 		strPath = Path.removeTrailingSlashes(strPath);
+		strPath = strPath + '/';
 		if (FileSystem.exists(strPath)) {
 			trace('Str path is correct.');
 		} else {
@@ -79,7 +80,7 @@ class Test {
 			while (iStr < strFiles.length) {
 				var thisUsm = usmFiles[iUsm];
 				var thisUsmPath = new haxe.io.Path(thisUsm);
-				trace(thisUsmPath);
+				// trace(thisUsmPath);
 				if (thisUsmPath.ext == 'usm') {
 					// trace('next.');
 					var thisStr = strFiles[iStr];
