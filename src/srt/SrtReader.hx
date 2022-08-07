@@ -3,6 +3,8 @@ package srt;
 import usm.*;
 import usm.UsmData.StrData;
 
+using StringTools;
+
 class SrtReader {
 	var i:sys.io.FileInput;
 
@@ -15,20 +17,33 @@ class SrtReader {
 		var fileLength = UsmTools.checkInputLength(i);
 		var sectionBlock = [];
 		var it = 0;
-		while (it < fileLength) {
+		while (it < fileLength - 30) {
 			var result = readSection();
 			sectionBlock[result.number - 1] = result;
 			it = i.tell();
+			trace(it);
 		}
+		trace('Srt file has been read.');
 		return sectionBlock;
 	}
 
 	function readSection():StrData {
+		var space = '\x20';
 		var numberS = i.readLine();
+		while (numberS.length == 0) {
+			numberS = i.readLine();
+		}
 		var timeStartS = i.readString(12);
-		i.read(5);
-		var timeEndS = i.readString(12);
-		i.readLine();
+		while (space.isSpace(0)) {
+			space = i.readString(1);
+		}
+		i.read(3);
+		space = '\x20';
+		while (space.isSpace(0)) {
+			space = i.readString(1);
+		}
+		var timeEndS = i.readLine();
+		timeEndS = space + timeEndS;
 		var text = i.readLine();
 		var stopLoop = false;
 		try {
@@ -39,7 +54,7 @@ class SrtReader {
 			}
 		} catch (e:haxe.io.Eof) {
 			stopLoop = true;
-			trace(e);
+			trace(e + ' pos: ${i.tell()}');
 		}
 		// String to int
 		var number = Std.parseInt(numberS);
@@ -57,7 +72,6 @@ class SrtReader {
 		var timeEArrayConcat = timeEArray.concat(timeEndSplit);
 		timeEndS = timeEArrayConcat.join('');
 		var timeEnd = Std.parseInt(timeEndS);
-		trace('Srt file has been read.');
 
 		return {
 			number: number,

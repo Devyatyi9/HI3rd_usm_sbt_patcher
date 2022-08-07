@@ -12,14 +12,14 @@ class Test {
 	static public function main():Void {
 		trace("Test launch");
 		// var path = "5.3_Birthday_Kiana_4919E914AA03A7E4_1.usm";
-		// var strPath = 'srt/5.3_Birthday_Kiana_4919E914AA03A7E4_1_en.srt';
+		var strPath = 'srt/CG02_batch_en.srt';
 		// usmTestReadWrite(path);
 		// new UsmPatcher(path).patchFile(strPath);
-		// readStr(strPath);
+		readStr(strPath);
 		//
-		var configData = configFile(); // test_config, true
-		var loadedConfig = checkConfig(configData.game_path, configData.srt_path, configData.postfix);
-		multipleFilesProcessing(loadedConfig);
+		// var configData = configFile(); // test_config, true
+		// var loadedConfig = checkConfig(configData.game_path, configData.srt_path, configData.postfix);
+		// multipleFilesProcessing(loadedConfig);
 	}
 
 	static function checkConfig(game_path:String, strPath:String, postfix:String) {
@@ -102,9 +102,6 @@ class Test {
 			iStr = 0;
 			iUsm++;
 		}
-		// var path = '';
-		// new UsmPatcher(usmFiles[iUsm]).patchFile(strFiles[iStr]);
-		// new UsmPatcher(path).patchFile(strPath);
 		trace('The end.');
 	}
 
