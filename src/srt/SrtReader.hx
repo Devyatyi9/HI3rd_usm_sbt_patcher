@@ -17,14 +17,24 @@ class SrtReader {
 		var fileLength = UsmTools.checkInputLength(i);
 		var sectionBlock = [];
 		var it = 0;
+		it = checkEncoding();
 		while (it < fileLength - 30) {
 			var result = readSection();
 			sectionBlock[result.number - 1] = result;
 			it = i.tell();
-			trace(it);
 		}
 		trace('Srt file has been read.');
 		return sectionBlock;
+	}
+
+	function checkEncoding() {
+		var marker = i.read(3);
+		if (marker.toHex() == 'efbbbf') {
+			trace('UTF-8 BOM.');
+		} else {
+			i.seek(0, SeekBegin);
+		}
+		return i.tell();
 	}
 
 	function readSection():StrData {
@@ -42,7 +52,8 @@ class SrtReader {
 		while (space.isSpace(0)) {
 			space = i.readString(1);
 		}
-		var timeEndS = i.readLine();
+		var timeEndS = i.readString(11);
+		i.readLine();
 		timeEndS = space + timeEndS;
 		var text = i.readLine();
 		var stopLoop = false;

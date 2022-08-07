@@ -12,7 +12,7 @@ class Test {
 	static public function main():Void {
 		trace("Test launch");
 		// var path = "5.3_Birthday_Kiana_4919E914AA03A7E4_1.usm";
-		var strPath = 'srt/CG02_batch_en.srt';
+		var strPath = 'srt/CG04_batch_en.srt';
 		// usmTestReadWrite(path);
 		// new UsmPatcher(path).patchFile(strPath);
 		readStr(strPath);
