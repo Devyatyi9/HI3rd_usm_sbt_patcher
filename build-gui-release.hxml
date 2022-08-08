@@ -1,12 +1,12 @@
 # --verbose
 
 -cp src
--main SndWavRepacker
+-main Main
 
 -lib hxWidgets
 -lib haxeui-core
 -lib haxeui-hxwidgets
---library tink_json:0.11.0
+# --library tink_json:0.11.0
 
 # -D analyzer-optimize
 -D ABI=-MD

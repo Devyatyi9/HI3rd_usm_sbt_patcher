@@ -35,9 +35,9 @@ class UsmTools {
 			} else
 				it++;
 		}
-		if (it == (fileLength - 3)) {
-			trace("@SBT tag not found in this file.");
-			throw(haxe.Exception);
+		if (it == (fileLength - 3) || it == fileLength) {
+			throw("Eof, @SBT tag not found in this file.");
+			// throw(haxe.Exception);
 		}
 		i.seek(-4, SeekCur);
 		// trace('cur pos: ' + i.tell());
@@ -54,6 +54,8 @@ class UsmTools {
 		i.bigEndian = false;
 		return chunkSize + 4;
 	}
+
+	public static function writeMarker(i:FileInput) {}
 
 	public static function readBytesInput(i:FileInput, length:Int):SbtTag {
 		var startPos = i.tell();

@@ -11,11 +11,11 @@ using StringTools;
 class Test {
 	static public function main():Void {
 		trace("Test launch");
-		// var path = "5.3_Birthday_Kiana_4919E914AA03A7E4_1.usm";
-		var strPath = 'srt/CG04_batch_en.srt';
-		// usmTestReadWrite(path);
+		var path = "start.usm";
+		// var strPath = 'srt/CG04_batch_en.srt';
+		usmTestReadWrite(path);
 		// new UsmPatcher(path).patchFile(strPath);
-		readStr(strPath);
+		// readStr(strPath);
 		//
 		// var configData = configFile(); // test_config, true
 		// var loadedConfig = checkConfig(configData.game_path, configData.srt_path, configData.postfix);
@@ -102,7 +102,7 @@ class Test {
 			iStr = 0;
 			iUsm++;
 		}
-		trace('The end.');
+		trace('Finished.');
 	}
 
 	static function configFile(?config_data:ConfigFile, ?save:Bool) {
@@ -136,7 +136,7 @@ class Test {
 		var thisUSM = new UsmReader(input).read(-1, false);
 		// trace(thisUSM[25].text);
 		input.close();
-		var save_location = "test/2.6_CG107_mux.usm";
+		var save_location = "test/__2.6_CG107_mux.usm";
 
 		var output = sys.io.File.write(save_location);
 		trace('Start of usm file writing: "$save_location"');
