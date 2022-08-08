@@ -55,7 +55,10 @@ class UsmPatcher {
 	function mergeData(fileData:Array<SbtTag>, strData:Array<StrData>) {
 		var usmI = 0;
 		var srtI = 0;
-		while (usmI < fileData.length && srtI < strData.length) {
+		while (usmI < fileData.length) {
+			if (srtI >= strData.length) {
+				break;
+			}
 			if (fileData[usmI].isSbt == true && fileData[usmI].langId == 1) {
 				fileData[usmI].startTime = strData[srtI].timeStart;
 				fileData[usmI].endTime = strData[srtI].timeEnd - strData[srtI].timeStart;
