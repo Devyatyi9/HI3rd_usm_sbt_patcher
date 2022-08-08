@@ -64,11 +64,22 @@ class UsmTools {
 		return chunkSize + 4;
 	}
 
+	public static function readMarker(i:FileInput) {
+		var result = false;
+		var cur = i.tell();
+		i.seek(28, SeekBegin);
+		var mark = i.readString(4);
+		i.seek(cur, SeekBegin);
+		if (mark == '@RUS') {
+			trace('The file mark has been read.');
+			result = true;
+		}
+		return result;
+	}
+
 	public static function writeMarker(o:FileOutput) {
-		var cur = o.tell();
 		o.seek(28, SeekBegin);
 		o.writeString('@RUS');
-		// o.seek(cur, SeekBegin);
 		trace('The file has been marked.');
 	}
 

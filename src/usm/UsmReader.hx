@@ -11,10 +11,19 @@ class UsmReader {
 		i.bigEndian = false;
 	}
 
-	public function read(?sbtLang = -1, ?onlySbt = true) {
+	public function read(?sbtLang = -1, ?onlySbt = true, ?ignoreMarker = false) {
 		if (i.readString(4) != 'CRID')
 			throw 'This file not supported.';
-		var sbtBlock = processing(sbtLang, onlySbt);
+		var sbtBlock = [sbtDefaultValue()];
+		var marker = false;
+		if (ignoreMarker == false) {
+			marker = UsmTools.readMarker(i);
+		}
+		if (marker == false) {
+			sbtBlock = processing(sbtLang, onlySbt);
+		} else {
+			sbtBlock = [];
+		}
 		return sbtBlock;
 	}
 
@@ -132,23 +141,7 @@ class UsmReader {
 		5 - german
 	 */
 	function parseSbt():SbtTag {
-		var result = {
-			isSbt: true,
-			previousRawBytes: Bytes.alloc(0),
-			startPos: 0,
-			endTag: false,
-			chunkLength: 0,
-			paddingSize: 0, // haxe.io.Bytes.Bytes.alloc(0)
-			type: -1,
-			timestamp: 0,
-			langId: 0,
-			interval: 0,
-			startTime: 0,
-			endTime: 0,
-			textLength: 0,
-			text: '',
-			textLengthEquals: false
-		};
+		var result = sbtDefaultValue();
 		result.startPos = i.tell();
 		i.readInt32(); // @SBT
 		i.bigEndian = true;
@@ -197,6 +190,27 @@ class UsmReader {
 			if (text == '#CONTENTS END   ') {
 				result.endTag = true;
 			}
+		}
+		return result;
+	}
+
+	function sbtDefaultValue() {
+		var result = {
+			isSbt: true,
+			previousRawBytes: Bytes.alloc(0),
+			startPos: 0,
+			endTag: false,
+			chunkLength: 0,
+			paddingSize: 0, // haxe.io.Bytes.Bytes.alloc(0)
+			type: -1,
+			timestamp: 0,
+			langId: 0,
+			interval: 0,
+			startTime: 0,
+			endTime: 0,
+			textLength: 0,
+			text: '',
+			textLengthEquals: false
 		}
 		return result;
 	}

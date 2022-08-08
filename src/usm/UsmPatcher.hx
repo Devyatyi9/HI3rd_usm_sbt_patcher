@@ -25,6 +25,7 @@ class UsmPatcher {
 
 	public function extractSubtitles() {
 		var fileData = read(1, true);
+		// if (fileData.length > 0)
 		return fileData;
 	}
 

@@ -11,7 +11,7 @@ using StringTools;
 class Test {
 	static public function main():Void {
 		trace("Test launch");
-		var path = "start.usm";
+		var path = "2.6_CG107_mux.usm";
 		// var strPath = 'srt/2.6_CG107_mux_en.srt';
 		usmTestReadWrite(path);
 		// new UsmPatcher(path).patchFile(strPath);
