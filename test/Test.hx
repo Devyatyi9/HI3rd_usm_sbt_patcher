@@ -11,15 +11,15 @@ using StringTools;
 class Test {
 	static public function main():Void {
 		trace("Test launch");
-		var path = "2.6_CG107_mux.usm";
+		// var path = "start.usm";
 		// var strPath = 'srt/2.6_CG107_mux_en.srt';
-		usmTestReadWrite(path);
+		// usmTestReadWrite(path);
 		// new UsmPatcher(path).patchFile(strPath);
 		// readStr(strPath);
 		//
-		// var configData = configFile(); // test_config, true
-		// var loadedConfig = checkConfig(configData.game_path, configData.srt_path, configData.postfix);
-		// multipleFilesProcessing(loadedConfig);
+		var configData = configFile(); // test_config, true
+		var loadedConfig = checkConfig(configData.game_path, configData.srt_path, configData.postfix);
+		multipleFilesProcessing(loadedConfig);
 	}
 
 	static function checkConfig(game_path:String, strPath:String, postfix:String) {

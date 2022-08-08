@@ -22,6 +22,7 @@ class UsmReader {
 		if (marker == false) {
 			sbtBlock = processing(sbtLang, onlySbt);
 		} else {
+			trace('File was skipped.');
 			sbtBlock = [];
 		}
 		return sbtBlock;
