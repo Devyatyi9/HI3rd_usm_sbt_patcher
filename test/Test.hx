@@ -12,7 +12,7 @@ class Test {
 	static public function main():Void {
 		trace("Test launch");
 		// var path = "start.usm";
-		// var strPath = 'srt/2.6_CG107_mux_en.srt';
+		// var strPath = 'srt/Story_05_en.srt';
 		// usmTestReadWrite(path);
 		// new UsmPatcher(path).patchFile(strPath);
 		// readStr(strPath);

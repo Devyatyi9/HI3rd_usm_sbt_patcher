@@ -37,24 +37,45 @@ class SrtReader {
 		return i.tell();
 	}
 
-	function readSection():StrData {
+	function checkSpace() {
 		var space = '\x20';
+		while (space.isSpace(0)) {
+			space = i.readString(1);
+		}
+		// i.seek(-1, SeekCur);
+		return space;
+	}
+
+	function readSection():StrData {
+		// number
 		var numberS = i.readLine();
 		while (numberS.length == 0) {
 			numberS = i.readLine();
 		}
-		var timeStartS = i.readString(12);
-		while (space.isSpace(0)) {
-			space = i.readString(1);
+		/*
+			while (space.isSpace(0)) {
+				space = i.readString(1);
+				// space = '\x20';
+			}
+		 */
+		// timeStart
+		var timeStartS = '';
+		while (timeStartS.length < 12) {
+			timeStartS += checkSpace();
 		}
-		i.read(3);
-		space = '\x20';
-		while (space.isSpace(0)) {
-			space = i.readString(1);
+		// Arrow
+		var arrow = '';
+		while (arrow.length < 3) {
+			arrow += checkSpace();
 		}
-		var timeEndS = i.readString(11);
+		// timeEnd
+		var timeEndS = '';
+		while (timeEndS.length < 12) {
+			timeEndS += checkSpace();
+		}
+		// line break
 		i.readLine();
-		timeEndS = space + timeEndS;
+		// text
 		var text = i.readLine();
 		var stopLoop = false;
 		try {
