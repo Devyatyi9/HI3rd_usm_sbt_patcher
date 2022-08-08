@@ -55,6 +55,7 @@ class SbtWriter {
 			}
 			it++;
 		}
+		UsmTools.writeMarker(o);
 		trace('Usm file has been write.');
 	}
 }

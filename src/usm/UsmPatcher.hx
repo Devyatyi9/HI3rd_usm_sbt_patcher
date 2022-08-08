@@ -15,10 +15,12 @@ class UsmPatcher {
 	public function patchFile(srt_path:String) {
 		// USM Read
 		var fileData = read(false);
-		var strData = readStr(srt_path);
-		mergeData(fileData, strData);
-		// USM Write
-		write(fileData);
+		if (fileData.length > 0) {
+			var strData = readStr(srt_path);
+			mergeData(fileData, strData);
+			// USM Write
+			write(fileData);
+		}
 	}
 
 	public function extractSubtitles() {

@@ -4,9 +4,18 @@
             font-size: 15px;
         }
     </style>
-    <hbox>
-        <button text="Click Me!" id="button1" />
-        <button text="Click Me!" id="button2" />
-        <button text="Click Me!" id="button3" />
+    <hbox width="100%">
+        <label text="Paste game path here:"/>
     </hbox>
+    <hbox width="100%">
+        <textfield placeholder="Enter game path" id="pathTextfield" />
+    </hbox>
+    <hbox>
+        <button text="Click Me!" id="button1" width="100" />
+        <button text="Click Me!" id="button2" width="100" />
+        <button text="Click Me!" id="button3" width="100" />
+    </hbox>
+    <box width="100%">
+        <label text="This is status bar" id="theLabel"/>
+    </box>
 </vbox>

@@ -12,7 +12,7 @@ class Test {
 	static public function main():Void {
 		trace("Test launch");
 		var path = "start.usm";
-		// var strPath = 'srt/CG04_batch_en.srt';
+		// var strPath = 'srt/2.6_CG107_mux_en.srt';
 		usmTestReadWrite(path);
 		// new UsmPatcher(path).patchFile(strPath);
 		// readStr(strPath);
@@ -136,13 +136,15 @@ class Test {
 		var thisUSM = new UsmReader(input).read(-1, false);
 		// trace(thisUSM[25].text);
 		input.close();
-		var save_location = "test/__2.6_CG107_mux.usm";
+		if (thisUSM.length > 0) {
+			var save_location = "test/__2.6_CG107_mux.usm";
 
-		var output = sys.io.File.write(save_location);
-		trace('Start of usm file writing: "$save_location"');
-		new SbtWriter(output).write(thisUSM);
-		output.close();
-		trace('end.');
+			var output = sys.io.File.write(save_location);
+			trace('Start of usm file writing: "$save_location"');
+			new SbtWriter(output).write(thisUSM);
+			output.close();
+			trace('end.');
+		}
 	}
 
 	static function readStr(location:String) {

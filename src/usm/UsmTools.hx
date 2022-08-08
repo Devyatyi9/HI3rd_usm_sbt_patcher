@@ -1,6 +1,7 @@
 package usm;
 
 import sys.io.FileInput;
+import sys.io.FileOutput;
 import usm.UsmData;
 
 class UsmTools {
@@ -13,6 +14,8 @@ class UsmTools {
 	}
 
 	public static function skipData(i:FileInput, ?fileLength = -1) {
+		var theEnd = false;
+		var result = 0;
 		var tag_SBT = 'SBT';
 		fileLength = UsmTools.checkInputLength(i);
 		var byteChar:Int;
@@ -36,12 +39,18 @@ class UsmTools {
 				it++;
 		}
 		if (it == (fileLength - 3) || it == fileLength) {
-			throw("Eof, @SBT tag not found in this file.");
+			trace("Eof, @SBT tag not found in this file.");
+			theEnd = true;
 			// throw(haxe.Exception);
 		}
 		i.seek(-4, SeekCur);
 		// trace('cur pos: ' + i.tell());
-		return it - 4;
+		if (theEnd == true) {
+			result = -1;
+		} else {
+			result = it - 4;
+		}
+		return result;
 	}
 
 	static function skipChunkData(i:FileInput, tag:String) {
@@ -55,7 +64,13 @@ class UsmTools {
 		return chunkSize + 4;
 	}
 
-	public static function writeMarker(i:FileInput) {}
+	public static function writeMarker(o:FileOutput) {
+		var cur = o.tell();
+		o.seek(28, SeekBegin);
+		o.writeString('@RUS');
+		// o.seek(cur, SeekBegin);
+		trace('The file has been marked.');
+	}
 
 	public static function readBytesInput(i:FileInput, length:Int):SbtTag {
 		var startPos = i.tell();

@@ -22,6 +22,7 @@ class UsmReader {
 		var fileLength = UsmTools.checkInputLength(i);
 		var rawBytesLength = -1;
 		var previousDataPos = 0;
+		var endValue = 0;
 		var usmBlock = [];
 		var it = 0;
 		while (it < fileLength) {
@@ -34,7 +35,11 @@ class UsmReader {
 				}
 			}
 			// trace('before rawBytesLength tell: ' + i.tell());
-			UsmTools.skipData(i, fileLength); // rawBytesLength
+			endValue = UsmTools.skipData(i, fileLength); // rawBytesLength
+			if (endValue == -1) {
+				usmBlock = [];
+				break;
+			}
 			var beginPos = i.tell();
 			// var chunkPos = i.tell();
 			// var chunkLength = chunkPos - curPos;
@@ -85,7 +90,7 @@ class UsmReader {
 			}
 			it++;
 		}
-		if (onlySbt == false) {
+		if (onlySbt == false && endValue != -1) {
 			// trace(i.tell());
 			// trace('only sbt false');
 			previousDataPos = i.tell();
@@ -104,7 +109,7 @@ class UsmReader {
 			} else
 				it++;
 		}
-		if (sbtLang != -1) {
+		if (sbtLang != -1 && endValue != -1) {
 			it = 0;
 			while (it < usmBlock.length) {
 				if (usmBlock[it].langId != sbtLang) {
@@ -113,7 +118,9 @@ class UsmReader {
 					it++;
 			}
 		}
-		trace('Usm file has been read.');
+		if (endValue != -1) {
+			trace('Usm file has been read.');
+		}
 		return usmBlock;
 	}
 
