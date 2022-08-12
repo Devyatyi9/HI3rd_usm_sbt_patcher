@@ -46,30 +46,34 @@ class SrtReader {
 		return space;
 	}
 
+	function timeParser() {}
+
 	function readSection():StrData {
+		// variables
+		var timeStartS = '';
+		var arrow = '';
+		var timeEndS = '';
+
 		// number
 		var numberS = i.readLine();
 		while (numberS.length == 0) {
 			numberS = i.readLine();
 		}
-		/*
-			while (space.isSpace(0)) {
-				space = i.readString(1);
-				// space = '\x20';
-			}
-		 */
 		// timeStart
-		var timeStartS = '';
 		while (timeStartS.length < 12) {
 			timeStartS += checkSpace();
+			if (timeStartS.charAt(timeStartS.length - 1) == '-') {
+				arrow = timeStartS.charAt(timeStartS.length - 1);
+				timeStartS = timeStartS.substr(0, timeStartS.length - 1);
+				timeStartS = timeStartS.rpad('0', 12);
+				break;
+			}
 		}
 		// Arrow
-		var arrow = '';
 		while (arrow.length < 3) {
 			arrow += checkSpace();
 		}
 		// timeEnd
-		var timeEndS = '';
 		while (timeEndS.length < 12) {
 			timeEndS += checkSpace();
 		}

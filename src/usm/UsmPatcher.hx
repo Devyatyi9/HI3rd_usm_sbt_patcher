@@ -1,6 +1,6 @@
 package usm;
 
-import haxe.macro.Expr.TypeParam;
+import haxe.Exception;
 import usm.UsmData;
 import haxe.io.Bytes;
 import srt.*;
@@ -17,6 +17,7 @@ class UsmPatcher {
 		var fileData = read(false);
 		if (fileData.length > 0) {
 			var strData = readStr(srt_path);
+			checkStr(strData);
 			mergeData(fileData, strData);
 			// USM Write
 			write(fileData);
@@ -52,7 +53,28 @@ class UsmPatcher {
 		return thisStr;
 	}
 
+	function checkStr(thisStr:Array<StrData>) {
+		var i = 0;
+		while (i < thisStr.length) {
+			try {
+				var number = thisStr[i].number;
+				if (number < 0) {}
+				var timeStart = thisStr[i].timeStart;
+				if (timeStart < 0) {}
+				var timeEnd = thisStr[i].timeEnd;
+				if (timeEnd < 0) {}
+				var text = thisStr[i].text;
+				if (text.length < 0) {}
+			} catch (e:Exception) {
+				trace('Data error in this str file, element $i.\n' + e.message);
+				throw(e.stack);
+			}
+			i++;
+		}
+	}
+
 	function mergeData(fileData:Array<SbtTag>, strData:Array<StrData>) {
+		trace('Start of merging data.');
 		var usmI = 0;
 		var srtI = 0;
 		while (usmI < fileData.length) {

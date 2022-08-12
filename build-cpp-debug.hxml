@@ -1,12 +1,13 @@
 # --verbose
---debug
+# --debug
+# -lib hxcpp-debug-server
 
 -cp src
 -cp test
 # -main Test
 # --main SndArgs
 --main Test
---cpp bin
+--cpp bin-cli
 
 # --library tink_json:0.11.0
 # -lib format
