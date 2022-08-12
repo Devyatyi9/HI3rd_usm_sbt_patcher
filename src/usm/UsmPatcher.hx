@@ -14,7 +14,7 @@ class UsmPatcher {
 
 	public function patchFile(srt_path:String) {
 		// USM Read
-		var fileData = read(false);
+		var fileData = read(1, false);
 		if (fileData.length > 0) {
 			var strData = readStr(srt_path);
 			checkStr(strData);

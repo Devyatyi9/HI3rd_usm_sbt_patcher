@@ -61,6 +61,7 @@ class UsmReader {
 				rawBytesLength = beginPos - previousDataPos;
 				// если SBT блоки идут друг с за другом
 				if (usmBlock.length > 1) {
+					// проверяется предыдущий элемент массива, если он sbt, то выполняется
 					if (usmBlock[it - 1].isSbt == true) {
 						var sbtEndPos = usmBlock[it - 1].startPos + usmBlock[it - 1].chunkLength + 8;
 						if (beginPos == sbtEndPos) {
@@ -72,6 +73,14 @@ class UsmReader {
 									paddingLength -= 2;
 								// trace('paddingLength: ' + paddingLength);
 								i.seek(paddingLength, SeekCur);
+							}
+							// convert sbt to bytes if sbtLang is given
+							if (sbtLang != -1 && usmBlock[it].langId != sbtLang && usmBlock[it].endTag == false) {
+								var blockPos = i.tell();
+								var skipLength = blockPos - usmBlock[it].startPos;
+								i.seek(-skipLength, SeekCur);
+								var previousChunkData = UsmTools.readBytesInput(i, skipLength);
+								usmBlock[it] = previousChunkData;
 							}
 							previousDataPos = i.tell();
 							it++;
@@ -87,11 +96,17 @@ class UsmReader {
 				usmBlock[it] = previousChunkData;
 				it++;
 				usmBlock[it] = parseSbt();
-				if (usmBlock[it].type != 0) {
+				if (usmBlock[it].type != 0 && usmBlock[it].endTag == false) {
 					var blockPos = i.tell();
 					// trace("blockPos " + blockPos);
 					var skipLength = blockPos - usmBlock[it].startPos;
 					// trace("skipLength " + skipLength);
+					i.seek(-skipLength, SeekCur);
+					var previousChunkData = UsmTools.readBytesInput(i, skipLength);
+					usmBlock[it] = previousChunkData;
+				} else if (sbtLang != -1 && usmBlock[it].langId != sbtLang && usmBlock[it].endTag == false) { // convert sbt to bytes if sbtLang is given
+					var blockPos = i.tell();
+					var skipLength = blockPos - usmBlock[it].startPos;
 					i.seek(-skipLength, SeekCur);
 					var previousChunkData = UsmTools.readBytesInput(i, skipLength);
 					usmBlock[it] = previousChunkData;
@@ -119,7 +134,7 @@ class UsmReader {
 			} else
 				it++;
 		}
-		if (sbtLang != -1 && endValue != -1) {
+		if (sbtLang != -1 && endValue != -1 && onlySbt == true) {
 			it = 0;
 			while (it < usmBlock.length) {
 				if (usmBlock[it].langId != sbtLang) {
