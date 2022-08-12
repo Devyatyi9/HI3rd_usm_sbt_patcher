@@ -46,7 +46,71 @@ class SrtReader {
 		return space;
 	}
 
-	function timeParser() {}
+	function timeParser(?newChar = '') {
+		var r = ~/[0-9]/i;
+		var anotherChar = '';
+		// 2
+		var first = '';
+		if (newChar.length > 0)
+			first = newChar;
+		while (first.length < 2) {
+			var char = checkSpace();
+			if (r.match(char)) {
+				first += char;
+			} else {
+				trace('Subtitle time mismatch in first part.');
+				i.seek(-1, SeekCur);
+				first = first.lpad('0', 2);
+			}
+		}
+		i.read(1);
+		first += ':';
+		// 2
+		var second = '';
+		while (second.length < 2) {
+			var char = checkSpace();
+			if (r.match(char)) {
+				second += char;
+			} else {
+				trace('Subtitle time mismatch in second part.');
+				i.seek(-1, SeekCur);
+				second = second.lpad('0', 2);
+			}
+		}
+		i.read(1);
+		second += ':';
+		// 2
+		var third = '';
+		while (third.length < 2) {
+			var char = checkSpace();
+			if (r.match(char)) {
+				third += char;
+			} else {
+				trace('Subtitle time mismatch in third part.');
+				i.seek(-1, SeekCur);
+				third = third.lpad('0', 2);
+			}
+		}
+		i.read(1);
+		third += ',';
+		// 3
+		var fourth = '';
+		while (fourth.length < 3) {
+			var char = checkSpace();
+			if (r.match(char)) {
+				anotherChar = char;
+				fourth += char;
+			} else {
+				trace('Subtitle time mismatch in fourth part.');
+				fourth = fourth.lpad('0', 3);
+			}
+		}
+		var resultString = first + second + third + fourth;
+		return {
+			resultString: resultString,
+			anotherChar: anotherChar
+		}
+	}
 
 	function readSection():StrData {
 		// variables
@@ -60,23 +124,15 @@ class SrtReader {
 			numberS = i.readLine();
 		}
 		// timeStart
-		while (timeStartS.length < 12) {
-			timeStartS += checkSpace();
-			if (timeStartS.charAt(timeStartS.length - 1) == '-') {
-				arrow = timeStartS.charAt(timeStartS.length - 1);
-				timeStartS = timeStartS.substr(0, timeStartS.length - 1);
-				timeStartS = timeStartS.rpad('0', 12);
-				break;
-			}
-		}
+		var timePars1 = timeParser();
+		timeStartS = timePars1.resultString;
+		// arrow = timePars1.anotherChar;
 		// Arrow
 		while (arrow.length < 3) {
 			arrow += checkSpace();
 		}
 		// timeEnd
-		while (timeEndS.length < 12) {
-			timeEndS += checkSpace();
-		}
+		timeEndS = timeParser().resultString;
 		// line break
 		i.readLine();
 		// text
