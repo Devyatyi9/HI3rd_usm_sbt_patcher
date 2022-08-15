@@ -16,9 +16,9 @@ class UsmPatcher {
 		// USM Read
 		var fileData = read(true);
 		if (fileData.length > 0) {
-			var strData = readStr(srt_path);
-			checkStr(strData);
-			mergeData(fileData, strData);
+			var SrtData = readSrt(srt_path);
+			checkSrt(SrtData);
+			mergeData(fileData, SrtData);
 			// USM Write
 			// write(fileData);
 			// USM Update
@@ -26,10 +26,18 @@ class UsmPatcher {
 		}
 	}
 
+	// reading subtitles in usm file
 	public function extractSubtitles() {
 		var fileData = read(1, true);
 		// if (fileData.length > 0)
 		return fileData;
+	}
+
+	function writeTxt(SrtData:Array<SrtData>) {
+		var output = sys.io.File.write(location);
+		trace('Start of Scaleform txt file writing: "$location"');
+		new SrtWriter(output).writeTxt(SrtData);
+		output.close();
 	}
 
 	function read(?langId = -1, ?onlySbt = true) {
@@ -54,48 +62,48 @@ class UsmPatcher {
 		output.close();
 	}
 
-	function readStr(location:String) {
+	function readSrt(location:String) {
 		var input = sys.io.File.read(location);
 		trace('Start of srt file reading: "$location"');
-		var thisStr = new SrtReader(input).read();
+		var thisSrt = new SrtReader(input).read();
 		input.close();
-		return thisStr;
+		return thisSrt;
 	}
 
-	function checkStr(thisStr:Array<StrData>) {
+	function checkSrt(thisSrt:Array<SrtData>) {
 		var i = 0;
-		while (i < thisStr.length) {
+		while (i < thisSrt.length) {
 			try {
-				var number = thisStr[i].number;
+				var number = thisSrt[i].number;
 				if (number < 0) {}
-				var timeStart = thisStr[i].timeStart;
+				var timeStart = thisSrt[i].timeStart;
 				if (timeStart < 0) {}
-				var timeEnd = thisStr[i].timeEnd;
+				var timeEnd = thisSrt[i].timeEnd;
 				if (timeEnd < 0) {}
-				var text = thisStr[i].text;
+				var text = thisSrt[i].text;
 				if (text.length < 0) {}
 			} catch (e:Exception) {
-				trace('Data error in this str file, element $i.\n' + e.message);
+				trace('Data error in this srt file, element $i.\n' + e.message);
 				throw(e.stack);
 			}
 			i++;
 		}
 	}
 
-	function mergeData(fileData:Array<SbtTag>, strData:Array<StrData>) {
+	function mergeData(fileData:Array<SbtTag>, SrtData:Array<SrtData>) {
 		trace('Start of merging data.');
 		var usmI = 0;
 		var srtI = 0;
 		while (usmI < fileData.length) {
-			if (srtI >= strData.length) {
+			if (srtI >= SrtData.length) {
 				break;
 			}
 			if (fileData[usmI].isSbt == true && fileData[usmI].langId == 1) {
-				fileData[usmI].timestamp = strData[srtI].timeStart;
-				fileData[usmI].startTime = strData[srtI].timeStart;
-				fileData[usmI].endTime = strData[srtI].timeEnd - strData[srtI].timeStart;
-				fileData[usmI].text = strData[srtI].text;
-				fileData[usmI].textLength = Bytes.ofString(strData[srtI].text).length;
+				fileData[usmI].timestamp = SrtData[srtI].timeStart;
+				fileData[usmI].startTime = SrtData[srtI].timeStart;
+				fileData[usmI].endTime = SrtData[srtI].timeEnd - SrtData[srtI].timeStart;
+				fileData[usmI].text = SrtData[srtI].text;
+				fileData[usmI].textLength = Bytes.ofString(SrtData[srtI].text).length;
 				fileData[usmI].textLengthEquals = false;
 				fileData[usmI].paddingSize = 0;
 				fileData[usmI].chunkLength = 44 + fileData[usmI].textLength;

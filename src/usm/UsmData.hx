@@ -22,7 +22,7 @@ typedef SbtTag = {
 	var textLengthEquals:Bool;
 }
 
-typedef StrData = {
+typedef SrtData = {
 	var number:Int;
 	var timeStart:Int;
 	var timeEnd:Int;

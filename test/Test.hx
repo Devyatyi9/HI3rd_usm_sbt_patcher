@@ -1,5 +1,6 @@
 package;
 
+import usm.UsmData;
 import usm.UsmData.ConfigFile;
 import sys.FileSystem;
 import haxe.io.Path;
@@ -13,7 +14,8 @@ class Test {
 		trace('author: Devyatyi9');
 		trace("Test launch");
 		// var path = "Story_06.usm";
-		// var strPath = 'srt/Story_06_en.srt';
+		var srtPath = 'srt/Story_06_en.srt';
+		var txtPath = 'Story_06_en.txt';
 		// usmTestReadWrite(path);
 		// new UsmPatcher(path).patchFile(strPath);
 		// readStr(strPath);
@@ -22,9 +24,11 @@ class Test {
 		var loadedConfig = checkConfig(configData.game_path, configData.srt_path, configData.postfix);
 		multipleFilesProcessing(loadedConfig);
 		//
+		var srtData = readSrt(srtPath);
+		writeTxt(txtPath, srtData);
 	}
 
-	static function checkConfig(game_path:String, strPath:String, postfix:String) {
+	static function checkConfig(game_path:String, srtPath:String, postfix:String) {
 		// "C:\\Program Files\\Honkai Impact 3rd glb"
 		// Games/BH3_Data/StreamingAssets/Video/
 		game_path = Path.normalize(game_path);
@@ -43,65 +47,65 @@ class Test {
 			trace('Usm video path: ' + game_path + usm_path);
 			throw "Incorrect game path!";
 		}
-		strPath = Path.normalize(strPath);
-		strPath = Path.removeTrailingSlashes(strPath);
-		strPath = strPath + '/';
-		if (FileSystem.exists(strPath)) {
-			trace('Str path is correct.');
+		srtPath = Path.normalize(srtPath);
+		srtPath = Path.removeTrailingSlashes(srtPath);
+		srtPath = srtPath + '/';
+		if (FileSystem.exists(srtPath)) {
+			trace('Srt path is correct.');
 		} else {
-			FileSystem.createDirectory(strPath);
-			trace('Str folder has been created: ' + strPath);
-			trace('Please, place *.str files in: ' + FileSystem.absolutePath(strPath));
+			FileSystem.createDirectory(srtPath);
+			trace('Srt folder has been created: ' + srtPath);
+			trace('Please, place *.srt files in: ' + FileSystem.absolutePath(srtPath));
 		}
 		trace('Postfix for srt files is "$postfix".');
 		return {
 			usm_path: usm_path,
-			strPath: strPath,
+			srtPath: srtPath,
 			postfix: postfix
 		}
 	}
 
-	static function multipleFilesProcessing(config:{usm_path:String, strPath:String, postfix:String}) {
+	static function multipleFilesProcessing(config:{usm_path:String, srtPath:String, postfix:String}) {
 		// Srt files
-		var strFiles = FileSystem.readDirectory(config.strPath);
-		if (strFiles.length == 0) {
-			throw('*.str files not found, please, place it in: ' + FileSystem.absolutePath(config.strPath));
+		var srtFiles = FileSystem.readDirectory(config.srtPath);
+		if (srtFiles.length == 0) {
+			throw('*.srt files not found, please, place it in: ' + FileSystem.absolutePath(config.srtPath));
 		}
-		// trace(strFiles);
+		// trace(srtFiles);
 		// Usm files
 		var usmFiles = FileSystem.readDirectory(config.usm_path);
 		if (usmFiles.length == 0) {
 			throw('*.usm files not found in: ' + FileSystem.absolutePath(config.usm_path));
 		}
 		var iUsm = 0;
-		var iStr = 0;
+		var iSrt = 0;
 		while (iUsm < usmFiles.length) {
-			while (iStr < strFiles.length) {
+			while (iSrt < srtFiles.length) {
 				var thisUsm = usmFiles[iUsm];
 				var thisUsmPath = new haxe.io.Path(thisUsm);
 				// trace(thisUsmPath);
 				if (thisUsmPath.ext == 'usm') {
 					// trace('next.');
-					var thisStr = strFiles[iStr];
-					var thisStrPath = new haxe.io.Path(thisStr);
-					// trace(thisStrPath);
-					if (thisStrPath.ext == 'srt') {
+					var thisSrt = srtFiles[iSrt];
+					var thisSrtPath = new haxe.io.Path(thisSrt);
+					// trace(thisSrtPath);
+					if (thisSrtPath.ext == 'srt') {
 						// trace('go next.');
-						var thisStrNotPostfix = thisStrPath.file.endsWith(config.postfix);
-						if (thisUsmPath.file == thisStrPath.file) {
-							new UsmPatcher(usmFiles[iUsm]).patchFile(strFiles[iStr]);
-						} else if (thisStrNotPostfix == true) {
+						var thisSrtNotPostfix = thisSrtPath.file.endsWith(config.postfix);
+						if (thisUsmPath.file == thisSrtPath.file) {
+							new UsmPatcher(usmFiles[iUsm]).patchFile(srtFiles[iSrt]);
+						} else if (thisSrtNotPostfix == true) {
 							// trace('test');
-							var thisStrTrimmed = thisStrPath.file.substr(0, thisStrPath.file.length - config.postfix.length);
-							if (thisUsmPath.file == thisStrTrimmed) {
-								new UsmPatcher(config.usm_path + usmFiles[iUsm]).patchFile(config.strPath + strFiles[iStr]);
+							var thisSrtTrimmed = thisSrtPath.file.substr(0, thisSrtPath.file.length - config.postfix.length);
+							if (thisUsmPath.file == thisSrtTrimmed) {
+								new UsmPatcher(config.usm_path + usmFiles[iUsm]).patchFile(config.srtPath + srtFiles[iSrt]);
 							}
 						}
 					}
 				}
-				iStr++;
+				iSrt++;
 			}
-			iStr = 0;
+			iSrt = 0;
 			iUsm++;
 		}
 		trace('Finished.');
@@ -149,11 +153,20 @@ class Test {
 		}
 	}
 
-	static function readStr(location:String) {
+	static function readSrt(location:String) {
 		var input = sys.io.File.read(location);
 		trace('Start of srt file reading: "$location"');
-		var thisStr = new SrtReader(input).read();
+		var thisSrt = new SrtReader(input).read();
 		input.close();
-		return thisStr;
+		return thisSrt;
+	}
+
+	static function writeSrt(location:String) {}
+
+	static function writeTxt(location:String, SrtData:Array<SrtData>) {
+		var output = sys.io.File.write(location);
+		trace('Start of Scaleform txt file writing: "$location"');
+		new SrtWriter(output).writeTxt(SrtData);
+		output.close();
 	}
 }
