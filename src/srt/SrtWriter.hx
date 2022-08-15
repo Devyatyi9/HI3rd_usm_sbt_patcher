@@ -30,7 +30,8 @@ class SrtWriter {
 		var it = 0;
 		while (it < SrtData.length) {
 			o.writeString(Std.string(SrtData[it].timeStart) + ', ');
-			o.writeString(Std.string(SrtData[it].timeEnd) + ', ');
+			var timeEnd = SrtData[it].timeEnd - SrtData[it].timeStart;
+			o.writeString(Std.string(timeEnd) + ', ');
 			o.writeString(SrtData[it].text + '\n');
 			it++;
 		}
