@@ -24,8 +24,8 @@ class Test {
 		var loadedConfig = checkConfig(configData.game_path, configData.srt_path, configData.postfix);
 		multipleFilesProcessing(loadedConfig);
 		//
-		var srtData = readSrt(srtPath);
-		writeTxt(txtPath, srtData);
+		// var srtData = readSrt(srtPath);
+		// writeTxt(txtPath, srtData);
 	}
 
 	static function checkConfig(game_path:String, srtPath:String, postfix:String) {

@@ -141,7 +141,7 @@ class SrtReader {
 		try {
 			var textNext = i.readLine();
 			while (textNext.length > 0 || stopLoop == true) {
-				text = text + '\n' + textNext;
+				text = text + '\\n' + textNext;
 				textNext = i.readLine();
 			}
 		} catch (e:haxe.io.Eof) {
