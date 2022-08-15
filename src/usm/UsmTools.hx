@@ -93,6 +93,7 @@ class UsmTools {
 			startPos: startPos,
 			endTag: false,
 			chunkLength: 0,
+			oldChunkLength: 0,
 			paddingSize: 0,
 			type: -1,
 			timestamp: 0,

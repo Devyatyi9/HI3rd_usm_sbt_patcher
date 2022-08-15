@@ -14,13 +14,15 @@ class UsmPatcher {
 
 	public function patchFile(srt_path:String) {
 		// USM Read
-		var fileData = read(1, false);
+		var fileData = read(true);
 		if (fileData.length > 0) {
 			var strData = readStr(srt_path);
 			checkStr(strData);
 			mergeData(fileData, strData);
 			// USM Write
-			write(fileData);
+			// write(fileData);
+			// USM Update
+			update(fileData);
 		}
 	}
 
@@ -42,6 +44,13 @@ class UsmPatcher {
 		var output = sys.io.File.write(location);
 		trace('Start of usm file writing: "$location"');
 		new SbtWriter(output).write(thisUSM);
+		output.close();
+	}
+
+	function update(thisUSM:Array<SbtTag>) {
+		var output = sys.io.File.update(location);
+		trace('Start of usm file updating: "$location"');
+		new SbtWriter(output).update(thisUSM);
 		output.close();
 	}
 
@@ -82,6 +91,7 @@ class UsmPatcher {
 				break;
 			}
 			if (fileData[usmI].isSbt == true && fileData[usmI].langId == 1) {
+				fileData[usmI].timestamp = strData[srtI].timeStart;
 				fileData[usmI].startTime = strData[srtI].timeStart;
 				fileData[usmI].endTime = strData[srtI].timeEnd - strData[srtI].timeStart;
 				fileData[usmI].text = strData[srtI].text;

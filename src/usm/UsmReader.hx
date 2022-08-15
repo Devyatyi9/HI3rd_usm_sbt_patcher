@@ -162,6 +162,7 @@ class UsmReader {
 		i.readInt32(); // @SBT
 		i.bigEndian = true;
 		result.chunkLength = i.readInt32();
+		result.oldChunkLength = result.chunkLength;
 		i.read(2); // unknown 0x18 - probably Payload offset (24b)
 		i.read(1);
 		var paddingSize = i.read(1); // padding bytes
@@ -217,6 +218,7 @@ class UsmReader {
 			startPos: 0,
 			endTag: false,
 			chunkLength: 0,
+			oldChunkLength: 0,
 			paddingSize: 0, // haxe.io.Bytes.Bytes.alloc(0)
 			type: -1,
 			timestamp: 0,

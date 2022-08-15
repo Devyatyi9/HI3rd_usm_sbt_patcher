@@ -9,6 +9,7 @@ typedef SbtTag = {
 	var startPos:Int;
 	var endTag:Bool;
 	var chunkLength:Int;
+	var oldChunkLength:Int;
 	var paddingSize:Int; // haxe.io.Bytes //Int
 	var type:Int;
 	var timestamp:Int;

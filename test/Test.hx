@@ -12,8 +12,8 @@ class Test {
 	static public function main():Void {
 		trace('author: Devyatyi9');
 		trace("Test launch");
-		// var path = "start.usm";
-		// var strPath = 'srt/Story_05_en.srt';
+		// var path = "Story_06.usm";
+		// var strPath = 'srt/Story_06_en.srt';
 		// usmTestReadWrite(path);
 		// new UsmPatcher(path).patchFile(strPath);
 		// readStr(strPath);
@@ -21,7 +21,7 @@ class Test {
 		var configData = configFile(); // test_config, true
 		var loadedConfig = checkConfig(configData.game_path, configData.srt_path, configData.postfix);
 		multipleFilesProcessing(loadedConfig);
-		Sys.stdin();
+		//
 	}
 
 	static function checkConfig(game_path:String, strPath:String, postfix:String) {
