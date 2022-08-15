@@ -17,8 +17,8 @@ class Test {
 		var srtPath = 'srt/Story_06_en.srt';
 		var txtPath = 'Story_06_en.txt';
 		// usmTestReadWrite(path);
-		// new UsmPatcher(path).patchFile(strPath);
-		// readStr(strPath);
+		// new UsmPatcher(path).patchFile(srtPath);
+		// readSrt(srtPath);
 		//
 		var configData = configFile(); // test_config, true
 		var loadedConfig = checkConfig(configData.game_path, configData.srt_path, configData.postfix);
