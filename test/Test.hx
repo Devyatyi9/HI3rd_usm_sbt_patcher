@@ -14,18 +14,67 @@ class Test {
 		trace('author: Devyatyi9');
 		trace("Test launch");
 		// var path = "Story_06.usm";
-		var srtPath = 'srt/Story_06_en.srt';
-		var txtPath = 'Story_06_en.txt';
+		// var srtPath = 'srt/Story_06_en.srt';
+		// var txtPath = 'Story_06_en.txt';
 		// usmTestReadWrite(path);
 		// new UsmPatcher(path).patchFile(srtPath);
 		// readSrt(srtPath);
 		//
-		var configData = configFile(); // test_config, true
-		var loadedConfig = checkConfig(configData.game_path, configData.srt_path, configData.postfix);
-		multipleFilesProcessing(loadedConfig);
+		// var configData = configFile(); // test_config, true
+		// var loadedConfig = checkConfig(configData.game_path, configData.srt_path, configData.postfix);
+		// multipleFilesProcessing(loadedConfig);
 		//
 		// var srtData = readSrt(srtPath);
 		// writeTxt(txtPath, srtData);
+		//
+		cmdRun();
+	}
+
+	static function cmdRun() {
+		var args = Sys.args();
+		trace(args);
+		args = ['-srt-convert', '-multiple', 'srt', 'txt/more/and_moore/yesss'];
+		trace('Use -h for help.');
+		var i = 0;
+		while (i < args.length) {
+			// srt > txt
+			// first
+			if (args[i] == '-srt-convert') {
+				// second
+				if (args[i + 1] == '-single') {
+					// third
+					var srt_location = args[i + 2];
+					var save_location = '';
+					if (args.length > 3) {
+						// fourth
+						save_location = args[i + 3];
+					} else {
+						var new_save_location = new haxe.io.Path(srt_location);
+						save_location = new_save_location.dir + '/' + new_save_location.file + '.txt';
+					}
+					var srtData = readSrt(srt_location);
+					new UsmPatcher(save_location).writeTxt(srtData);
+					// second
+				} else if (args[i + 1] == '-multiple') {
+					// third
+					var srt_location = args[i + 2];
+					var save_location = '';
+					if (args.length > 3) {
+						// fourth
+						save_location = args[i + 3];
+					}
+					multipleWriteTxt(srt_location, save_location);
+				}
+			} else if (args[i] == '-help' || args[i] == '-h') {
+				trace('author: Devyatyi9');
+				trace("srt to Scaleform's txt conversion: ");
+				trace('-srt-convert -single|-multiple "srt_location" ("save_location")\n');
+				trace('Example: ');
+				trace('-srt-convert -single "srt/Story_06_en.srt" "Story_06_en.txt"');
+				trace('-srt-convert -multiple "srt" "output/txt"');
+			}
+			i++;
+		}
 	}
 
 	static function checkConfig(game_path:String, srtPath:String, postfix:String) {
@@ -168,5 +217,32 @@ class Test {
 		trace('Start of Scaleform txt file writing: "$location"');
 		new SrtWriter(output).writeTxt(SrtData);
 		output.close();
+	}
+
+	static function multipleWriteTxt(srt_location:String, save_location:String) {
+		srt_location = Path.removeTrailingSlashes(srt_location);
+		srt_location = Path.normalize(srt_location);
+		var srtFiles = FileSystem.readDirectory(srt_location);
+
+		var it = 0;
+		while (it < srtFiles.length) {
+			var srt_file = srt_location + '/' + srtFiles[it];
+			var srtData = readSrt(srt_file);
+
+			if (save_location.length > 0) {
+				save_location = Path.removeTrailingSlashes(save_location);
+				save_location = Path.normalize(save_location);
+
+				var srt_location = new haxe.io.Path(srtFiles[it]);
+				save_location = save_location + '/' + srt_location.file + '.txt';
+			} else {
+				var new_save_location = new haxe.io.Path(srtFiles[it]);
+				save_location = srt_location + '/' + new_save_location.file + '.txt';
+			}
+			var dir_save_location = new haxe.io.Path(save_location);
+			FileSystem.createDirectory(dir_save_location.dir);
+			new UsmPatcher(save_location).writeTxt(srtData);
+			it++;
+		}
 	}
 }

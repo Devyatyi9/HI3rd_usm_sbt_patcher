@@ -33,7 +33,8 @@ class UsmPatcher {
 		return fileData;
 	}
 
-	function writeTxt(SrtData:Array<SrtData>) {
+	// writing subtitles (from srt) in txt format for Scaleform VideoEncoder - CRIWARE Medianoche
+	public function writeTxt(SrtData:Array<SrtData>) {
 		var output = sys.io.File.write(location);
 		trace('Start of Scaleform txt file writing: "$location"');
 		new SrtWriter(output).writeTxt(SrtData);
