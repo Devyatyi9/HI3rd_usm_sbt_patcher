@@ -12,7 +12,7 @@
 # --library tink_json:0.11.0
 # -lib format
 
-# -D analyzer-optimize
+-D analyzer-optimize
 
 # --class-path lib/tfh-snd-wav/src
 # --class-path lib/tfh-package-format/src

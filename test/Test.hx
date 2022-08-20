@@ -13,7 +13,7 @@ class Test {
 	static public function main():Void {
 		trace('author: Devyatyi9');
 		trace("Test launch");
-		// var path = "Story_06.usm";
+		var path = "D:\\Honkai_Impact_videos\\usm_videos\\Story_06.usm";
 		// var srtPath = 'srt/Story_06_en.srt';
 		// var txtPath = 'Story_06_en.txt';
 		// usmTestReadWrite(path);
@@ -27,13 +27,12 @@ class Test {
 		// var srtData = readSrt(srtPath);
 		// writeTxt(txtPath, srtData);
 		//
-		cmdRun();
+		// cmdRun();
 	}
 
 	static function cmdRun() {
 		var args = Sys.args();
-		trace(args);
-		args = ['-srt-convert', '-multiple', 'srt', 'txt/more/and_moore/yesss'];
+		// trace(args);
 		trace('Use -h for help.');
 		var i = 0;
 		while (i < args.length) {
@@ -210,13 +209,26 @@ class Test {
 		return thisSrt;
 	}
 
-	static function writeSrt(location:String) {}
+	static function writeSrt(location:String, usm:Array<SbtTag>) {
+		var output = sys.io.File.write(location);
+		trace('Start of srt file writing: "$location"');
+		new SrtWriter(output).writeSrt(usm);
+		output.close();
+	}
 
 	static function writeTxt(location:String, SrtData:Array<SrtData>) {
 		var output = sys.io.File.write(location);
 		trace('Start of Scaleform txt file writing: "$location"');
 		new SrtWriter(output).writeTxt(SrtData);
 		output.close();
+	}
+
+	static function testSrtWrite(location:String, save_location:String) {
+		var input = sys.io.File.read(location);
+		trace('Start of usm file reading: "$location"');
+		var thisUSM = new UsmReader(input).read(1, true);
+		input.close();
+		writeSrt(save_location, thisUSM);
 	}
 
 	static function multipleWriteTxt(srt_location:String, save_location:String) {
