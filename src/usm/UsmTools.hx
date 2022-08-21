@@ -83,6 +83,12 @@ class UsmTools {
 		trace('The file has been marked.');
 	}
 
+	public static function fixSubtitleLang(o:FileOutput) {
+		o.seek(32, SeekCur);
+		o.writeInt32(1);
+		trace('Lang id has been Fixed. Pos: ' + o.tell());
+	}
+
 	public static function readBytesInput(i:FileInput, length:Int):SbtTag {
 		var startPos = i.tell();
 		// trace("readBytesInput tell: " + startPos);

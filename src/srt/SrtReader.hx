@@ -58,7 +58,7 @@ class SrtReader {
 			if (r.match(char)) {
 				first += char;
 			} else {
-				trace('Subtitle time mismatch in first part.');
+				trace('Subtitle time mismatch in first part. Pos: ' + i.tell());
 				i.seek(-1, SeekCur);
 				first = first.lpad('0', 2);
 			}
@@ -72,7 +72,7 @@ class SrtReader {
 			if (r.match(char)) {
 				second += char;
 			} else {
-				trace('Subtitle time mismatch in second part.');
+				trace('Subtitle time mismatch in second part. Pos: ' + i.tell());
 				i.seek(-1, SeekCur);
 				second = second.lpad('0', 2);
 			}
@@ -86,7 +86,7 @@ class SrtReader {
 			if (r.match(char)) {
 				third += char;
 			} else {
-				trace('Subtitle time mismatch in third part.');
+				trace('Subtitle time mismatch in third part. Pos: ' + i.tell());
 				i.seek(-1, SeekCur);
 				third = third.lpad('0', 2);
 			}
@@ -101,7 +101,7 @@ class SrtReader {
 				anotherChar = char;
 				fourth += char;
 			} else {
-				trace('Subtitle time mismatch in fourth part.');
+				trace('Subtitle time mismatch in fourth part. Pos: ' + i.tell());
 				fourth = fourth.lpad('0', 3);
 			}
 		}

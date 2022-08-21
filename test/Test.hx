@@ -11,9 +11,9 @@ using StringTools;
 
 class Test {
 	static public function main():Void {
-		trace('author: Devyatyi9');
-		trace("Test launch");
-		var path = "D:\\Honkai_Impact_videos\\usm_videos\\Story_06.usm";
+		// trace('author: Devyatyi9');
+		// trace("Test launch");
+		// var path = "D:\\Honkai_Impact_videos\\usm_videos\\Story_06.usm";
 		// var srtPath = 'srt/Story_06_en.srt';
 		// var txtPath = 'Story_06_en.txt';
 		// usmTestReadWrite(path);
@@ -27,12 +27,14 @@ class Test {
 		// var srtData = readSrt(srtPath);
 		// writeTxt(txtPath, srtData);
 		//
-		// cmdRun();
+		cmdRun();
 	}
 
 	static function cmdRun() {
 		var args = Sys.args();
 		// trace(args);
+		// args = ["-fixSbt", "videos_test/test_1_usm.usm"]; // "videos_test/test_1_usm.usm"
+		// args = ['-srt-convert', '-multiple', 'srt', 'txt'];
 		trace('Use -h for help.');
 		var i = 0;
 		while (i < args.length) {
@@ -64,13 +66,37 @@ class Test {
 					}
 					multipleWriteTxt(srt_location, save_location);
 				}
+			} else if (args[i] == '-fixSbt') {
+				if (args.length > 1) {
+					// second
+					var usm_location = args[i + 1];
+					usm_location = Path.removeTrailingSlashes(usm_location);
+					usm_location = Path.normalize(usm_location);
+					// trace(usm_location);
+					if (FileSystem.isDirectory(usm_location)) {
+						var usm_files = FileSystem.readDirectory(usm_location);
+						// trace(usm_location + usm_files[0]);
+						var it = 0;
+						while (it < usm_files.length) {
+							fixUsmSubtitle(usm_location + '/' + usm_files[it]);
+							it++;
+						}
+						trace('Done.');
+					} else {
+						fixUsmSubtitle(usm_location);
+						trace('Done.');
+					}
+				} else
+					trace('not enough arguments.');
 			} else if (args[i] == '-help' || args[i] == '-h') {
 				trace('author: Devyatyi9');
 				trace("srt to Scaleform's txt conversion: ");
 				trace('-srt-convert -single|-multiple "srt_location" ("save_location")\n');
 				trace('Example: ');
 				trace('-srt-convert -single "srt/Story_06_en.srt" "Story_06_en.txt"');
-				trace('-srt-convert -multiple "srt" "output/txt"');
+				trace('-srt-convert -multiple "srt" "output/txt"\n');
+				trace('Fix sbt lang id: ');
+				trace('-fixSbt "usm_location"');
 			}
 			i++;
 		}
@@ -223,9 +249,26 @@ class Test {
 		output.close();
 	}
 
-	static function testSrtWrite(location:String, save_location:String) {
-		var input = sys.io.File.read(location);
-		trace('Start of usm file reading: "$location"');
+	static function fixUsmSubtitle(usm_location:String) {
+		var input = sys.io.File.read(usm_location);
+		trace('Start of usm file reading: "$usm_location"');
+		var thisUSM = new UsmReader(input).read(true);
+		input.close();
+		//
+		var output = sys.io.File.update(usm_location);
+		trace('Start of usm file updating: "$usm_location"');
+		var it = 0;
+		while (it < thisUSM.length) {
+			output.seek(thisUSM[it].startPos, SeekBegin);
+			UsmTools.fixSubtitleLang(output);
+			it++;
+		}
+		output.close();
+	}
+
+	static function exportSrt(usm_location:String, save_location:String) {
+		var input = sys.io.File.read(usm_location);
+		trace('Start of usm file reading: "$usm_location"');
 		var thisUSM = new UsmReader(input).read(1, true);
 		input.close();
 		writeSrt(save_location, thisUSM);
@@ -236,24 +279,27 @@ class Test {
 		srt_location = Path.normalize(srt_location);
 		var srtFiles = FileSystem.readDirectory(srt_location);
 
+		if (save_location.length > 0) {
+			save_location = Path.removeTrailingSlashes(save_location);
+			save_location = Path.normalize(save_location);
+		}
+		var fileSave_location = '';
+
 		var it = 0;
 		while (it < srtFiles.length) {
 			var srt_file = srt_location + '/' + srtFiles[it];
 			var srtData = readSrt(srt_file);
 
 			if (save_location.length > 0) {
-				save_location = Path.removeTrailingSlashes(save_location);
-				save_location = Path.normalize(save_location);
-
 				var srt_location = new haxe.io.Path(srtFiles[it]);
-				save_location = save_location + '/' + srt_location.file + '.txt';
+				fileSave_location = save_location + '/' + srt_location.file + '.txt';
 			} else {
 				var new_save_location = new haxe.io.Path(srtFiles[it]);
-				save_location = srt_location + '/' + new_save_location.file + '.txt';
+				fileSave_location = srt_location + '/' + new_save_location.file + '.txt';
 			}
-			var dir_save_location = new haxe.io.Path(save_location);
+			var dir_save_location = new haxe.io.Path(fileSave_location);
 			FileSystem.createDirectory(dir_save_location.dir);
-			new UsmPatcher(save_location).writeTxt(srtData);
+			new UsmPatcher(fileSave_location).writeTxt(srtData);
 			it++;
 		}
 	}

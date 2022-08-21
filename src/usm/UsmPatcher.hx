@@ -29,7 +29,12 @@ class UsmPatcher {
 	// reading subtitles in usm file
 	public function extractSubtitles() {
 		var fileData = read(1, true);
-		// if (fileData.length > 0)
+		if (fileData.length > 0) {
+			var output = sys.io.File.write(location);
+			trace('Start of srt file writing: "$location"');
+			new SrtWriter(output).writeSrt(fileData);
+			output.close();
+		}
 		return fileData;
 	}
 
