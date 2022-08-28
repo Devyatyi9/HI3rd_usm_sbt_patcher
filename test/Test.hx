@@ -88,6 +88,32 @@ class Test {
 					}
 				} else
 					trace('not enough arguments.');
+				// extract subtitles
+			} else if (args[i] == '-extractSbt') {
+				// second
+				var usm_location = args[i + 1];
+				usm_location = Path.removeTrailingSlashes(usm_location);
+				usm_location = Path.normalize(usm_location);
+				// third
+				var slangId = args[i + 2];
+				if (FileSystem.isDirectory(usm_location)) {}
+				//
+				// минимум 2, максимум 5
+				// если 3 то из доп. есть только save_location
+				// если 4 то из доп. есть -l и lang_id, если 5 то ещё и save_location
+				//
+				// if (args.length == 3)
+				// else if (args.length == 4)
+				// else if (args.length == 5)
+				//
+				// fourth
+				var test = args[i + 3];
+				// fifth
+				var test2 = args[i + 4];
+				//
+				var save_location = '';
+				var langId = -1;
+				new UsmPatcher(usm_location).extractSubtitles(save_location, langId);
 			} else if (args[i] == '-help' || args[i] == '-h') {
 				trace('author: Devyatyi9');
 				trace("srt to Scaleform's txt conversion: ");
@@ -96,7 +122,11 @@ class Test {
 				trace('-srt-convert -single "srt/Story_06_en.srt" "Story_06_en.txt"');
 				trace('-srt-convert -multiple "srt" "output/txt"\n');
 				trace('Fix sbt lang id: ');
-				trace('-fixSbt "usm_location"');
+				trace('-fixSbt "usm_location"\n');
+				trace('Extract subtitles from usm file: ');
+				trace('-extractSbt "usm_location" ("save_location") (-l lang_id)\n');
+				trace('Example 1: -extractSbt "usm_videos/Story_06.usm" "srt/Story_06.srt"');
+				trace('Example 2: -extractSbt "usm_videos/Story_06.usm" -l 4');
 			}
 			i++;
 		}

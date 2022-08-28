@@ -1,5 +1,6 @@
 package srt;
 
+import haxe.Exception;
 import usm.*;
 import usm.UsmData.SrtData;
 
@@ -15,13 +16,29 @@ class SrtReader {
 
 	public function read():Array<SrtData> {
 		var fileLength = UsmTools.checkInputLength(i);
-		var sectionBlock = [];
+		var sectionBlock:Array<SrtData> = [];
+		var sectionPosition = [];
 		var it = 0;
 		it = checkEncoding();
 		while (it < fileLength - 30) {
 			var result = readSection();
+			if (sectionBlock.length > 0) {
+				// проверка склейки блоков, не учитываются случаи когда предпоследний блок склеен с последним
+				var arrIndex = sectionBlock.length - 1;
+				if ((sectionBlock[arrIndex].number + 1) != result.number) {
+					trace('Error in index: ${arrIndex}, number: ${sectionBlock[arrIndex].number}! Let\'s fix this.');
+					if (sectionBlock.length > 1) {
+						result = readSection(sectionPosition[arrIndex - 1]);
+					} else {
+						result = readSection(0);
+					}
+					it = i.tell();
+					sectionPosition[sectionBlock.length - 1] = it;
+				}
+			}
 			sectionBlock[result.number - 1] = result;
 			it = i.tell();
+			sectionPosition[sectionBlock.length - 1] = it;
 		}
 		trace('Srt file has been read.');
 		return sectionBlock;
@@ -112,7 +129,10 @@ class SrtReader {
 		}
 	}
 
-	function readSection():SrtData {
+	function readSection(?position = -1):SrtData {
+		if (position != -1) {
+			i.seek(position, SeekBegin);
+		}
 		// variables
 		var timeStartS = '';
 		var arrow = '';
@@ -133,20 +153,40 @@ class SrtReader {
 		}
 		// timeEnd
 		timeEndS = timeParser().resultString;
+		// написать функцию которая будет определять отсутствие переноса строки через регулярное выражение, которое определяет число (number)
 		// line break
 		i.readLine();
 		// text
 		var text = i.readLine();
 		var stopLoop = false;
+
+		var textNext = i.readLine();
 		try {
-			var textNext = i.readLine();
 			while (textNext.length > 0 || stopLoop == true) {
+				if (position != -1) {
+					//  [0-9]
+					var regexp = ~/^\d{1,3}$/i;
+					if (regexp.match(textNext)) {
+						i.seek(-textNext.length, SeekCur); // i.seek(-(textNext.length + 2), SeekCur);
+						var diffNumber = i.readString(textNext.length);
+						if (diffNumber != textNext) {
+							i.seek(-(textNext.length + 1), SeekCur);
+							diffNumber = i.readString(textNext.length);
+							if (diffNumber != textNext) {
+								i.seek(-(textNext.length + 1), SeekCur);
+							}
+							// trace(diffNumber);
+						} else
+							i.seek(-textNext.length, SeekCur);
+						break;
+					}
+				}
 				text = text + '\\n' + textNext;
 				textNext = i.readLine();
 			}
 		} catch (e:haxe.io.Eof) {
 			stopLoop = true;
-			trace(e + ' pos: ${i.tell()}');
+			trace(e);
 		}
 		// String to int
 		var number = Std.parseInt(numberS);

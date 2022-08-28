@@ -37,5 +37,6 @@ time end = time begin + time end
 lang id:
 0 - china
 1 - english
+3 - thai
 4 - french
 5 - german

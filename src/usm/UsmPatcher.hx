@@ -27,15 +27,17 @@ class UsmPatcher {
 	}
 
 	// reading subtitles in usm file
-	public function extractSubtitles() {
-		var fileData = read(1, true);
+	public function extractSubtitles(save_location = '', ?langId = -1) {
+		if (langId == -1)
+			langId = 1;
+		var fileData = read(langId, true);
 		if (fileData.length > 0) {
-			var output = sys.io.File.write(location);
-			trace('Start of srt file writing: "$location"');
+			var output = sys.io.File.write(save_location);
+			trace('Start of srt file writing: "$save_location"');
 			new SrtWriter(output).writeSrt(fileData);
 			output.close();
 		}
-		return fileData;
+		// return fileData;
 	}
 
 	// writing subtitles (from srt) in txt format for Scaleform VideoEncoder - CRIWARE Medianoche
