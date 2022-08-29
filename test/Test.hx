@@ -35,7 +35,7 @@ class Test {
 		// trace(args);
 		// args = ["-fixSbt", "videos_test/test_1_usm.usm"]; // "videos_test/test_1_usm.usm"
 		// args = ['-srt-convert', '-multiple', 'srt', 'txt'];
-		args = ['-srt-convert', '-single', 'test_sub.srt', 'test_sub.txt'];
+		// args = ['-srt-convert', '-single', 'test_sub.srt', 'test_sub.txt'];
 		trace('Use -h for help.');
 		var i = 0;
 		while (i < args.length) {
