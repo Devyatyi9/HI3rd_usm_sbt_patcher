@@ -163,8 +163,8 @@ class SrtReader {
 		//  [0-9]
 		var regexpNumber = ~/^\d{1,3}$/i;
 
-		var textNext = i.readLine();
 		try {
+			var textNext = i.readLine();
 			while (textNext.length > 0 || stopLoop == true) {
 				// проверка склейки блоков
 				if (position != -1) {
