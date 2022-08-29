@@ -28,9 +28,11 @@ class SrtReader {
 				if ((sectionBlock[arrIndex].number + 1) != result.number) {
 					trace('Error in index: ${arrIndex}, number: ${sectionBlock[arrIndex].number}! Let\'s fix this.');
 					if (sectionBlock.length > 1) {
-						result = readSection(sectionPosition[arrIndex - 1]);
+						var number = sectionBlock[arrIndex].number + 1;
+						var posNumber = '' + number;
+						result = readSection(sectionPosition[arrIndex - 1], posNumber);
 					} else {
-						result = readSection(0);
+						result = readSection(0, '2');
 					}
 					it = i.tell();
 					sectionPosition[sectionBlock.length - 1] = it;
@@ -129,7 +131,7 @@ class SrtReader {
 		}
 	}
 
-	function readSection(?position = -1):SrtData {
+	function readSection(?position = -1, ?pNumber = '-1'):SrtData {
 		if (position != -1) {
 			i.seek(position, SeekBegin);
 		}
@@ -153,20 +155,20 @@ class SrtReader {
 		}
 		// timeEnd
 		timeEndS = timeParser().resultString;
-		// написать функцию которая будет определять отсутствие переноса строки через регулярное выражение, которое определяет число (number)
 		// line break
 		i.readLine();
 		// text
 		var text = i.readLine();
 		var stopLoop = false;
+		//  [0-9]
+		var regexpNumber = ~/^\d{1,3}$/i;
 
 		var textNext = i.readLine();
 		try {
 			while (textNext.length > 0 || stopLoop == true) {
+				// проверка склейки блоков
 				if (position != -1) {
-					//  [0-9]
-					var regexp = ~/^\d{1,3}$/i;
-					if (regexp.match(textNext)) {
+					if (regexpNumber.match(textNext) && textNext == pNumber) {
 						i.seek(-textNext.length, SeekCur); // i.seek(-(textNext.length + 2), SeekCur);
 						var diffNumber = i.readString(textNext.length);
 						if (diffNumber != textNext) {
@@ -174,6 +176,11 @@ class SrtReader {
 							diffNumber = i.readString(textNext.length);
 							if (diffNumber != textNext) {
 								i.seek(-(textNext.length + 1), SeekCur);
+								diffNumber = i.readString(textNext.length);
+								i.seek(-(textNext.length), SeekCur);
+								if (diffNumber != textNext) {
+									i.seek(-(textNext.length), SeekCur);
+								}
 							}
 							// trace(diffNumber);
 						} else
