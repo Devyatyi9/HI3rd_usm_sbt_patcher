@@ -54,7 +54,6 @@ class SrtReader {
 			sectionPosition[sectionBlock.length - 1] = it;
 		}
 		if (duplicateIndex != -1) {
-			// result.number = sectionBlock[arrIndex].number + 1;
 			while (duplicateIndex < sectionBlock.length) {
 				sectionBlock[duplicateIndex].number = duplicateIndex + 1;
 				duplicateIndex++;

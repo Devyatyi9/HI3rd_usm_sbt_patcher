@@ -37,6 +37,11 @@ class Test {
 		// args = ["-fixSbt", "videos_test/test_1_usm.usm"]; // "videos_test/test_1_usm.usm"
 		// args = ['-srt-convert', '-multiple', 'srt', 'txt'];
 		// args = ['-srt-convert', '-single', 'test_sub.srt', 'test_sub.txt'];
+		// args = ['-extractSbt', 'usm_videos/Story_06.usm', 'test_srt/Story_06.srt', '-l', '1'];
+		// args = ['-extractSbt', 'usm_videos/Story_06.usm', '-l', '1'];
+		// args = ['-extractSbt', 'usm_videos/Story_06.usm'];
+		// args = ['-extractSbt', 'usm_videos/', 'srt_export'];
+		// args = ['-extractSbt', 'usm_videos/', 'srt_export', '-l', '1'];
 		trace('Use -h for help.');
 		var i = 0;
 		while (i < args.length) {
@@ -78,47 +83,101 @@ class Test {
 					usm_location = Path.normalize(usm_location);
 					// trace(usm_location);
 					if (FileSystem.isDirectory(usm_location)) {
+						// multiple
 						var usm_files = FileSystem.readDirectory(usm_location);
 						// trace(usm_location + usm_files[0]);
 						var it = 0;
 						while (it < usm_files.length) {
+							var fileExt = haxe.io.Path.extension(usm_files[it]);
+							if (fileExt != 'usm') {
+								it++;
+								continue;
+							}
 							fixUsmSubtitle(usm_location + '/' + usm_files[it]);
 							it++;
 						}
 						trace('Done.');
 					} else {
+						// single
 						fixUsmSubtitle(usm_location);
 						trace('Done.');
 					}
 				} else
 					trace('not enough arguments.');
-				// extract subtitles
+				// Extract subtitles
 			} else if (args[i] == '-extractSbt') {
+				// -extractSbt "usm_location" ("save_location") (-l lang_id)
 				// second
 				var usm_location = args[i + 1];
 				usm_location = Path.removeTrailingSlashes(usm_location);
 				usm_location = Path.normalize(usm_location);
+				var save_location = '';
+				save_location = Path.removeTrailingSlashes(save_location);
+				save_location = Path.normalize(save_location);
+				var langId = -1;
 				// third
-				var slangId = args[i + 2];
-				if (FileSystem.isDirectory(usm_location)) {}
+				var thirdArg = args[i + 2];
 				//
 				// минимум 2, максимум 5
 				// если 3 то из доп. есть только save_location
 				// если 4 то из доп. есть -l и lang_id, если 5 то ещё и save_location
 				//
-				// if (args.length == 3)
-				// else if (args.length == 4)
-				// else if (args.length == 5)
+				if (args.length == 3) {
+					save_location = thirdArg;
+				} else if (args.length == 4) {
+					var langMarker = '-l';
+					if (thirdArg == langMarker) {
+						var slangId = args[i + 3];
+						langId = Std.parseInt(slangId);
+					}
+				} else if (args.length == 5) {
+					save_location = thirdArg;
+					var langMarker = '-l';
+					if (args[i + 3] == langMarker) {
+						var slangId = args[i + 4];
+						langId = Std.parseInt(slangId);
+					}
+				}
 				//
-				// fourth
-				var test = args[i + 3];
-				// fifth
-				var test2 = args[i + 4];
-				//
-				var save_location = '';
-				var langId = -1;
-				new UsmPatcher(usm_location).extractSubtitles(save_location, langId);
-				trace('Done.');
+				if (FileSystem.isDirectory(usm_location)) {
+					// multiple
+					var usm_files = FileSystem.readDirectory(usm_location);
+					// trace(usm_location + usm_files[0]);
+					var it = 0;
+					while (it < usm_files.length) {
+						var fileExt = haxe.io.Path.extension(usm_files[it]);
+						if (fileExt != 'usm') {
+							it++;
+							continue;
+						}
+						var file_usm_location = '';
+						var file_save_location = '';
+						if (save_location.length == 0) {
+							var file = new haxe.io.Path(usm_files[it]);
+							file_save_location = usm_location + '/' + file.file + '.srt';
+						} else {
+							FileSystem.createDirectory(save_location);
+							var file = new haxe.io.Path(usm_files[it]);
+							file_save_location = save_location + '/' + file.file + '.srt';
+						}
+						// usm_location > dir
+						file_usm_location = usm_location + '/' + usm_files[it];
+						new UsmPatcher(file_usm_location).extractSubtitles(file_save_location, langId);
+						it++;
+					}
+					trace('Done.');
+				} else {
+					// single
+					if (save_location.length == 0) {
+						var file = new haxe.io.Path(usm_location);
+						save_location = file.dir + '/' + file.file + '.srt';
+					} else {
+						var location = new haxe.io.Path(usm_location);
+						FileSystem.createDirectory(location.dir);
+					}
+					new UsmPatcher(usm_location).extractSubtitles(save_location, langId);
+					trace('Done.');
+				}
 			} else if (args[i] == '-help' || args[i] == '-h') {
 				trace('author: Devyatyi9');
 				trace("srt to Scaleform's txt conversion: ");
