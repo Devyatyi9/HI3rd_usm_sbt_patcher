@@ -18,14 +18,23 @@ class SrtReader {
 		var fileLength = UsmTools.checkInputLength(i);
 		var sectionBlock:Array<SrtData> = [];
 		var sectionPosition = [];
+		var duplicateIndex = -1;
 		var it = 0;
 		it = checkEncoding();
 		while (it < fileLength - 30) {
 			var result = readSection();
 			if (sectionBlock.length > 0) {
-				// проверка склейки блоков, не учитываются случаи когда предпоследний блок склеен с последним
+				// проверка повторяющихся блоков
+				// и проверка склейки блоков, не учитываются случаи когда предпоследний блок склеен с последним
 				var arrIndex = sectionBlock.length - 1;
-				if ((sectionBlock[arrIndex].number + 1) != result.number) {
+				if (sectionBlock[arrIndex].number == result.number) {
+					if ((sectionBlock[arrIndex].timeStart == result.timeStart) && (sectionBlock[arrIndex].timeEnd == result.timeEnd)) {
+						trace('Error in index: ${arrIndex}, number: ${sectionBlock[arrIndex].number}! Duplicate block.');
+						throw('This is the wrong end!');
+					} else {
+						duplicateIndex = arrIndex;
+					}
+				} else if ((sectionBlock[arrIndex].number + 1) != result.number) {
 					trace('Error in index: ${arrIndex}, number: ${sectionBlock[arrIndex].number}! Let\'s fix this.');
 					if (sectionBlock.length > 1) {
 						var number = sectionBlock[arrIndex].number + 1;
@@ -36,11 +45,20 @@ class SrtReader {
 					}
 					it = i.tell();
 					sectionPosition[sectionBlock.length - 1] = it;
+					sectionBlock[result.number - 1] = result;
+					continue;
 				}
 			}
-			sectionBlock[result.number - 1] = result;
+			sectionBlock[sectionPosition.length] = result; // result.number - 1
 			it = i.tell();
 			sectionPosition[sectionBlock.length - 1] = it;
+		}
+		if (duplicateIndex != -1) {
+			// result.number = sectionBlock[arrIndex].number + 1;
+			while (duplicateIndex < sectionBlock.length) {
+				sectionBlock[duplicateIndex].number = duplicateIndex + 1;
+				duplicateIndex++;
+			}
 		}
 		trace('Srt file has been read.');
 		return sectionBlock;
@@ -160,15 +178,13 @@ class SrtReader {
 		// text
 		var text = i.readLine();
 		var stopLoop = false;
-		//  [0-9]
-		var regexpNumber = ~/^\d{1,3}$/i;
 
 		try {
 			var textNext = i.readLine();
 			while (textNext.length > 0 || stopLoop == true) {
 				// проверка склейки блоков
 				if (position != -1) {
-					if (regexpNumber.match(textNext) && textNext == pNumber) {
+					if (textNext == pNumber) {
 						i.seek(-textNext.length, SeekCur); // i.seek(-(textNext.length + 2), SeekCur);
 						var diffNumber = i.readString(textNext.length);
 						if (diffNumber != textNext) {

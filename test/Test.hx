@@ -14,7 +14,8 @@ class Test {
 		// trace('author: Devyatyi9');
 		// trace("Test launch");
 		// var path = "D:\\Honkai_Impact_videos\\usm_videos\\Story_06.usm";
-		// var srtPath = 'srt/Story_06_en.srt';
+		// var srtPath = 'srt/Sakura_4_CG03_mux_en.srt';
+		// var srtPath = 'srt/4.0_Activity_CG08_3_mux_30ED56DE04527816_en.srt';
 		// var txtPath = 'Story_06_en.txt';
 		// usmTestReadWrite(path);
 		// new UsmPatcher(path).patchFile(srtPath);
@@ -34,7 +35,7 @@ class Test {
 		var args = Sys.args();
 		// trace(args);
 		// args = ["-fixSbt", "videos_test/test_1_usm.usm"]; // "videos_test/test_1_usm.usm"
-		// args = ['-srt-convert', '-multiple', 'srt', 'txt'];
+		args = ['-srt-convert', '-multiple', 'srt', 'txt'];
 		// args = ['-srt-convert', '-single', 'test_sub.srt', 'test_sub.txt'];
 		trace('Use -h for help.');
 		var i = 0;
@@ -56,6 +57,7 @@ class Test {
 					}
 					var srtData = readSrt(srt_location);
 					new UsmPatcher(save_location).writeTxt(srtData);
+					trace('Done.');
 					// second
 				} else if (args[i + 1] == '-multiple') {
 					// third
@@ -66,6 +68,7 @@ class Test {
 						save_location = args[i + 3];
 					}
 					multipleWriteTxt(srt_location, save_location);
+					trace('Done.');
 				}
 			} else if (args[i] == '-fixSbt') {
 				if (args.length > 1) {
@@ -115,6 +118,7 @@ class Test {
 				var save_location = '';
 				var langId = -1;
 				new UsmPatcher(usm_location).extractSubtitles(save_location, langId);
+				trace('Done.');
 			} else if (args[i] == '-help' || args[i] == '-h') {
 				trace('author: Devyatyi9');
 				trace("srt to Scaleform's txt conversion: ");
