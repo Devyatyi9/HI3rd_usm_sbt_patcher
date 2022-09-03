@@ -17,7 +17,7 @@ class SrtWriter {
 	public function writeSrt(usm:Array<SbtTag>) {
 		var it = 0;
 		while (it < usm.length) {
-			if (usm[it].isSbt == true) { // usm[it].langId == 1
+			if (usm[it].isSbt == true) {
 				o.writeString((it + 1) + '\r\n'); // number
 				var startTime = Std.string(usm[it].startTime);
 				var padStartTime = startTime.lpad('0', 9);
@@ -29,7 +29,8 @@ class SrtWriter {
 				o.writeString(padEndTime.substring(0, 2) + ':' + padEndTime.substring(2, 4) + ':' + padEndTime.substring(4, 6) + ','
 					+ padEndTime.substring(6, 9));
 				o.writeString('\r\n');
-				var newText = usm[it].text.replace('\\n', '\n');
+				var newText = usm[it].text.replace('\x00', '');
+				newText = usm[it].text.replace('\\n', '\n');
 				o.writeString(newText + '\r\n\r\n');
 			}
 			it++;

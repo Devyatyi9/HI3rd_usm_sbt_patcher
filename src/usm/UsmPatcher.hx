@@ -36,6 +36,8 @@ class UsmPatcher {
 			trace('Start of srt file writing: "$save_location"');
 			new SrtWriter(output).writeSrt(fileData);
 			output.close();
+		} else {
+			trace('Subtitles not found in this file!');
 		}
 		// return fileData;
 	}

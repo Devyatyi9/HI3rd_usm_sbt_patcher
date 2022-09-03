@@ -41,7 +41,7 @@ class Test {
 		// args = ['-extractSbt', 'usm_videos/Story_06.usm', '-l', '1'];
 		// args = ['-extractSbt', 'usm_videos/Story_06.usm'];
 		// args = ['-extractSbt', 'usm_videos/', 'srt_export'];
-		args = ['-extractSbt', 'usm_videos/', 'srt_export', '-l', '0'];
+		// args = ['-extractSbt', 'usm_videos/', 'srt_export', '-l', '4'];
 		trace('Use -h for help.');
 		var i = 0;
 		while (i < args.length) {
@@ -191,6 +191,7 @@ class Test {
 				trace('-extractSbt "usm_location" ("save_location") (-l lang_id)\n');
 				trace('Example 1: -extractSbt "usm_videos/Story_06.usm" "srt/Story_06.srt"');
 				trace('Example 2: -extractSbt "usm_videos/Story_06.usm" -l 4');
+				trace('lang id: 0 - china, 1 - english, 3 - thai, 4 - french, 5 - german');
 			}
 			i++;
 		}
