@@ -41,7 +41,7 @@ class Test {
 		// args = ['-extractSbt', 'usm_videos/Story_06.usm', '-l', '1'];
 		// args = ['-extractSbt', 'usm_videos/Story_06.usm'];
 		// args = ['-extractSbt', 'usm_videos/', 'srt_export'];
-		// args = ['-extractSbt', 'usm_videos/', 'srt_export', '-l', '1'];
+		args = ['-extractSbt', 'usm_videos/', 'srt_export', '-l', '0'];
 		trace('Use -h for help.');
 		var i = 0;
 		while (i < args.length) {
@@ -185,7 +185,7 @@ class Test {
 				trace('Example: ');
 				trace('-srt-convert -single "srt/Story_06_en.srt" "Story_06_en.txt"');
 				trace('-srt-convert -multiple "srt" "output/txt"\n');
-				trace('Fix sbt lang id: ');
+				trace('Fix sbt lang id (just changing to english - 1): ');
 				trace('-fixSbt "usm_location"\n');
 				trace('Extract subtitles from usm file: ');
 				trace('-extractSbt "usm_location" ("save_location") (-l lang_id)\n');
@@ -276,7 +276,7 @@ class Test {
 			iSrt = 0;
 			iUsm++;
 		}
-		trace('Finished.');
+		trace('\nFinished.');
 	}
 
 	static function configFile(?config_data:ConfigFile, ?save:Bool) {
