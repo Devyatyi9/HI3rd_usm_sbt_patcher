@@ -7,7 +7,7 @@ USM CRI Format for @SBT
 |timestamp  |  unknown  |  unknown  |  unknown  |
  00 00 0C 39 00 00 03 E8 00 00 00 00 00 00 00 00 
  
-|  lang id  | interval  |start time |  end time |
+|  lang id  | interval  |time begin |time durati|
  00 00 00 00 00 00 00 1E 00 00 00 00 00 00 00 00 
 
 |text length|              text                 |
@@ -24,13 +24,13 @@ USM CRI Format for @SBT
 
 4 byte lang id
 4 byte display interval in milliseconds
-4 byte start time
-4 byte end time
+4 byte time begin
+4 byte time duration
 
 40 53 42 54 00 00 00 38 00 18 00 00 00 00 00 02
 00 00 00 00 00 00 00 1E 00 00 00 00 00 00 00 00
 
-time end = time begin + time end
+time end = time begin + time duration
 
 Вероятно следует прибавлять 2 к длине строки субтитров при записи (только если есть выравнивание нулями)
 
